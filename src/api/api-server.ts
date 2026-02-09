@@ -1,0 +1,316 @@
+import express, { Request, Response } from 'express';
+import cors from 'cors';
+import { WorldStateManager } from '../core/world-state';
+import { TokenLedger } from '../token/token-ledger';
+import { PaymentGateway } from '../token/payment-gateway';
+import { ActionProcessor } from './action-processor';
+import { AgentAction, ActionType } from '../types';
+import { MonadBlockchainService } from '../blockchain/monad-service';
+
+/**
+ * REST API Server for Diem
+ */
+export class ApiServer {
+    private app: express.Application;
+    private worldState: WorldStateManager;
+    private tokenLedger: TokenLedger;
+    private paymentGateway: PaymentGateway;
+    private actionProcessor: ActionProcessor;
+    private blockchainService?: MonadBlockchainService;
+
+    constructor(
+        worldState: WorldStateManager,
+        tokenLedger: TokenLedger,
+        paymentGateway: PaymentGateway,
+        actionProcessor: ActionProcessor,
+        blockchainService?: MonadBlockchainService
+    ) {
+        this.app = express();
+        this.worldState = worldState;
+        this.tokenLedger = tokenLedger;
+        this.paymentGateway = paymentGateway;
+        this.actionProcessor = actionProcessor;
+        this.blockchainService = blockchainService;
+
+        this.setupMiddleware();
+        this.setupRoutes();
+    }
+
+    private setupMiddleware(): void {
+        this.app.use(cors());
+        this.app.use(express.json());
+    }
+
+    private setupRoutes(): void {
+        // Health check
+        this.app.get('/health', (req, res) => {
+            res.json({ status: 'ok', timestamp: Date.now() });
+        });
+
+        // Get world state
+        this.app.get('/world/state', (req, res) => {
+            const state = this.worldState.getState();
+            res.json({
+                locations: Array.from(state.locations.values()),
+                agentCount: state.agents.size,
+                economicStats: state.economicStats,
+                startTime: state.startTime,
+                lastUpdate: state.lastUpdate
+            });
+        });
+
+        // Get all locations
+        this.app.get('/world/locations', (req, res) => {
+            const state = this.worldState.getState();
+            res.json(Array.from(state.locations.values()));
+        });
+
+        // Get specific location
+        this.app.get('/world/locations/:locationId', (req, res) => {
+            const location = this.worldState.getLocation(req.params.locationId);
+            if (!location) {
+                return res.status(404).json({ error: 'Location not found' });
+            }
+            res.json(location);
+        });
+
+        // Get recent events
+        this.app.get('/world/events', (req, res) => {
+            const limit = parseInt(req.query.limit as string) || 50;
+            const events = this.worldState.getRecentEvents(limit);
+            res.json(events);
+        });
+
+        // Get leaderboard
+        this.app.get('/leaderboard', (req, res) => {
+            const limit = parseInt(req.query.limit as string) || 10;
+            const leaderboard = this.tokenLedger.getLeaderboard(limit);
+
+            // Enrich with agent names
+            const enriched = leaderboard.map(entry => {
+                const agent = this.worldState.getAgent(entry.agentId);
+                return {
+                    agentId: entry.agentId,
+                    name: agent?.name || 'Unknown',
+                    balance: entry.balance,
+                    stats: agent?.stats
+                };
+            });
+
+            res.json(enriched);
+        });
+
+        // Agent entry - pay fee and join world
+        this.app.post('/agent/enter', (req, res) => {
+            const { agentName, initialMon } = req.body;
+
+            if (!agentName) {
+                return res.status(400).json({ error: 'Agent name required' });
+            }
+
+            // Create agent with initial MON (for demo purposes)
+            const agent = this.worldState.addAgent(agentName, 0);
+
+            // Initialize MON balance
+            const monAmount = initialMon || 200; // Default 200 MON (enough for entry + activities)
+            this.tokenLedger.initializeBalance(agent.id, monAmount);
+
+            // Process entry payment
+            const paymentResult = this.paymentGateway.processEntry(agent.id);
+
+            if (!paymentResult.success) {
+                return res.status(400).json({ error: paymentResult.message });
+            }
+
+            res.json({
+                success: true,
+                agent: {
+                    id: agent.id,
+                    name: agent.name,
+                    locationId: agent.locationId,
+                    monBalance: this.tokenLedger.getBalance(agent.id)
+                },
+                sessionToken: paymentResult.sessionToken,
+                message: paymentResult.message
+            });
+        });
+
+        // Get agent info
+        this.app.get('/agent/:agentId', (req, res) => {
+            const agent = this.worldState.getAgent(req.params.agentId);
+            if (!agent) {
+                return res.status(404).json({ error: 'Agent not found' });
+            }
+
+            res.json({
+                ...agent,
+                monBalance: this.tokenLedger.getBalance(agent.id)
+            });
+        });
+
+        // Submit agent action
+        this.app.post('/agent/action', async (req, res) => {
+            const { sessionToken, action } = req.body;
+
+            if (!sessionToken) {
+                return res.status(401).json({ error: 'Session token required' });
+            }
+
+            // Validate session
+            const validation = this.paymentGateway.validateSession(sessionToken);
+            if (!validation.valid) {
+                return res.status(401).json({ error: validation.message });
+            }
+
+            const agentId = validation.agentId!;
+
+            // Parse action
+            const agentAction: AgentAction = {
+                agentId,
+                type: action.type as ActionType,
+                targetLocationId: action.targetLocationId,
+                targetResourceType: action.targetResourceType,
+                craftingRecipe: action.craftingRecipe,
+                tradeOffer: action.tradeOffer
+            };
+
+            // Process action
+            const result = await this.actionProcessor.processAction(agentAction);
+
+            // Get updated agent state
+            const agent = this.worldState.getAgent(agentId);
+
+            res.json({
+                ...result,
+                agent: agent ? {
+                    ...agent,
+                    monBalance: this.tokenLedger.getBalance(agentId)
+                } : undefined
+            });
+        });
+
+        // Blockchain Agent Entry
+        this.app.post('/agent/enter/blockchain', async (req, res) => {
+            const { agentName, walletAddress } = req.body;
+
+            if (!agentName || !walletAddress) {
+                return res.status(400).json({ error: 'Name and wallet required' });
+            }
+
+            const agentId = walletAddress.toLowerCase();
+            let agent = this.worldState.getAgent(agentId);
+
+            if (!agent) {
+                // Create agent in local state (Mon balance will act as cache)
+                // Use wallet address as ID for easy mapping
+                agent = {
+                    id: agentId,
+                    name: agentName,
+                    locationId: 'market_square',
+                    monBalance: 0,
+                    inventory: [],
+                    stats: {
+                        miningSkill: 0,
+                        gatheringSkill: 0,
+                        craftingSkill: 0,
+                        tradingSkill: 0,
+                        totalActions: 0
+                    },
+                    joinedAt: Date.now(),
+                    lastAction: Date.now()
+                };
+                this.worldState.updateAgent(agentId, agent);
+            }
+
+            res.json({
+                success: true,
+                agent,
+                message: 'Agent registered for blockchain mode'
+            });
+        });
+
+        // Blockchain Agent Action
+        this.app.post('/agent/action/blockchain', async (req, res) => {
+            const { walletAddress, action } = req.body;
+
+            if (!walletAddress || !this.blockchainService) {
+                return res.status(400).json({ error: 'Invalid request or blockchain service not verified' });
+            }
+
+            const agentId = walletAddress.toLowerCase();
+            const agent = this.worldState.getAgent(agentId);
+
+            if (!agent) {
+                return res.status(404).json({ error: 'Agent not found locally' });
+            }
+
+            // Execute logic locally
+            const agentAction: AgentAction = {
+                agentId,
+                type: action.type as ActionType,
+                targetLocationId: action.targetLocationId,
+                targetResourceType: action.targetResourceType,
+                craftingRecipe: action.craftingRecipe,
+                tradeOffer: action.tradeOffer
+            };
+
+            // Capture logic result (but override rewards for on-chain)
+            const logicResult = await this.actionProcessor.processAction(agentAction);
+
+            if (!logicResult.success) {
+                return res.json(logicResult);
+            }
+
+            // Game Master Logic: If action earned MON, trigger on-chain reward
+            if (logicResult.success && logicResult.monEarned && logicResult.monEarned > 0) {
+                try {
+                    const rewardAmount = logicResult.monEarned;
+                    const actionType = action.type.charAt(0).toUpperCase() + action.type.slice(1);
+
+                    // Trigger transaction (Server pays gas)
+                    console.log(`GM issuing reward to ${agentId}: ${rewardAmount} MON`);
+                    const txHash = await this.blockchainService.distributeReward(
+                        walletAddress,
+                        rewardAmount,
+                        `${actionType} reward`
+                    );
+
+                    logicResult.message += ` (Reward TX: ${txHash.substring(0, 10)}...)`;
+                } catch (error) {
+                    console.error('Blockchain reward failed:', error);
+                    logicResult.message += ' (Blockchain reward pending/failed)';
+                }
+            }
+
+            res.json(logicResult);
+        });
+
+        // Get agent transactions
+        this.app.get('/agent/:agentId/transactions', (req, res) => {
+            const limit = parseInt(req.query.limit as string) || 50;
+            const transactions = this.tokenLedger.getTransactionHistory(req.params.agentId, limit);
+            res.json(transactions);
+        });
+
+        // Get economic stats
+        this.app.get('/economy/stats', (req, res) => {
+            const state = this.worldState.getState();
+            res.json({
+                ...state.economicStats,
+                totalMonInCirculation: this.tokenLedger.getTotalCirculation(),
+                activeSessions: this.paymentGateway.getActiveSessionCount()
+            });
+        });
+    }
+
+    public start(port: number = 3000): void {
+        this.app.listen(port, () => {
+            console.log(`Diem API Server running on port ${port}`);
+            console.log(`Dashboard: http://localhost:${port}/world/state`);
+        });
+    }
+
+    public getApp(): express.Application {
+        return this.app;
+    }
+}

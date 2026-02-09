@@ -1,0 +1,149 @@
+.event-feed {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    font-family: var(--font-mono);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.events-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    /* Tight spacing for terminal feel */
+    padding-right: 5px;
+}
+
+/* Custom Scrollbar for Terminal */
+.events-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.events-list::-webkit-scrollbar-track {
+    background: rgba(0, 255, 65, 0.05);
+}
+
+.events-list::-webkit-scrollbar-thumb {
+    background: var(--neon-green);
+    border-radius: 2px;
+}
+
+.event-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 4px 8px;
+    border-left: 2px solid transparent;
+    transition: background 0.2s;
+    font-size: 0.85rem;
+    animation: slide-in 0.3s ease-out;
+}
+
+@keyframes slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.event-item:hover {
+    background: rgba(0, 255, 65, 0.05);
+}
+
+/* Event Types Color Coding */
+.event-agent_entered {
+    border-left-color: var(--neon-green);
+}
+
+.event-agent_moved {
+    border-left-color: var(--neon-cyan);
+}
+
+.event-resource_gathered {
+    border-left-color: var(--neon-amber);
+}
+
+.event-item_crafted {
+    border-left-color: var(--neon-pink);
+}
+
+.event-item_traded {
+    border-left-color: gold;
+}
+
+.event-mon_earned {
+    border-left-color: var(--neon-green);
+    background: rgba(0, 255, 65, 0.02);
+}
+
+.event-mon_spent {
+    border-left-color: #ff3333;
+    background: rgba(255, 51, 51, 0.02);
+}
+
+.event-timestamp {
+    color: var(--text-dim);
+    margin-right: 10px;
+    font-size: 0.75rem;
+    min-width: 65px;
+}
+
+.event-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.event-message {
+    color: var(--text-main);
+    line-height: 1.2;
+}
+
+.event-mon-change {
+    font-weight: bold;
+    font-size: 0.8rem;
+    margin-left: 5px;
+}
+
+.event-mon-change.positive {
+    color: var(--neon-green);
+}
+
+.event-mon-change.negative {
+    color: #ff3333;
+}
+
+.no-events {
+    color: var(--text-dim);
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+}
+
+/* Blinking Cursor at bottom (optional visual candy) */
+.terminal-cursor {
+    margin-top: 5px;
+    color: var(--neon-green);
+    animation: blink-cursor 1s step-end infinite;
+    padding-left: 10px;
+}
+
+@keyframes blink-cursor {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}

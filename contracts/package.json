@@ -1,0 +1,22 @@
+{
+    "name": "diem-contracts",
+    "version": "1.0.0",
+    "description": "Monad smart contracts for Diem virtual world",
+    "scripts": {
+        "compile": "hardhat compile",
+        "test": "hardhat test",
+        "deploy:testnet": "hardhat run scripts/deploy.ts --network monad-testnet",
+        "verify": "hardhat verify --network monad-testnet"
+    },
+    "devDependencies": {
+        "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+        "@openzeppelin/contracts": "^5.0.1",
+        "@typechain/hardhat": "^9.1.0",
+        "ethers": "^6.10.0",
+        "hardhat": "^2.19.4",
+        "typechain": "^8.3.2"
+    },
+    "dependencies": {
+        "dotenv": "^17.2.3"
+    }
+}

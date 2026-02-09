@@ -1,0 +1,109 @@
+.agent-list {
+    height: 400px;
+    overflow-y: auto;
+}
+
+.no-agents {
+    text-align: center;
+    padding: 40px;
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+}
+
+.agents-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.agent-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.agent-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.agent-rank {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #FFC107;
+    min-width: 40px;
+    text-align: center;
+}
+
+.agent-card:nth-child(1) .agent-rank {
+    color: #FFD700;
+    /* Gold */
+}
+
+.agent-card:nth-child(2) .agent-rank {
+    color: #C0C0C0;
+    /* Silver */
+}
+
+.agent-card:nth-child(3) .agent-rank {
+    color: #CD7F32;
+    /* Bronze */
+}
+
+.agent-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.agent-name {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.agent-location {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: capitalize;
+}
+
+.agent-balance {
+    text-align: right;
+}
+
+.balance-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #4CAF50;
+}
+
+.balance-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Scrollbar styling */
+.agent-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.agent-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.agent-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+.agent-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
