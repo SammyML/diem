@@ -1,0 +1,144 @@
+.arena-view {
+    background: linear-gradient(135deg, #2d1b00, #1a0000);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    border: 2px solid #ff0055;
+}
+
+.arena-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 18px;
+    color: #ff0055;
+    text-align: center;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055;
+    letter-spacing: 2px;
+}
+
+.arena-section {
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 14px;
+    color: #ffaa00;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.empty-state {
+    text-align: center;
+    color: #666;
+    padding: 30px;
+    font-style: italic;
+}
+
+.battle-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.battle-card {
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 8px;
+    padding: 15px;
+    border: 2px solid;
+    transition: all 0.3s ease;
+}
+
+.battle-card.open {
+    border-color: #4a4a6a;
+}
+
+.battle-card.active {
+    border-color: #ff0055;
+    animation: glow 2s infinite;
+}
+
+@keyframes glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 10px rgba(255, 0, 85, 0.5);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(255, 0, 85, 0.8);
+    }
+}
+
+.battle-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+.battle-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.battle-id {
+    font-size: 12px;
+    color: #888;
+    font-family: monospace;
+}
+
+.wager {
+    font-size: 14px;
+    font-weight: bold;
+    color: #ffaa00;
+    background: rgba(255, 170, 0, 0.2);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.battle-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.challenger,
+.opponent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.label {
+    font-size: 10px;
+    color: #888;
+    text-transform: uppercase;
+}
+
+.name {
+    font-size: 14px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.vs {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ff0055;
+}
+
+.vs.pulsing {
+    animation: pulse 1s infinite;
+}
+
+.battle-status {
+    margin-top: 12px;
+    text-align: center;
+    color: #ff0055;
+    font-weight: bold;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}

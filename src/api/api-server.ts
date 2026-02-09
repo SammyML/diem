@@ -6,6 +6,10 @@ import { PaymentGateway } from '../token/payment-gateway';
 import { ActionProcessor } from './action-processor';
 import { AgentAction, ActionType } from '../types';
 import { MonadBlockchainService } from '../blockchain/monad-service';
+import { worldBossManager } from '../mechanics/world-boss';
+import { factionManager, Faction } from '../mechanics/factions';
+import { pvpArenaManager } from '../mechanics/pvp-arena';
+import { seasonManager } from '../mechanics/seasons';
 
 /**
  * REST API Server for Diem
@@ -300,6 +304,208 @@ export class ApiServer {
                 totalMonInCirculation: this.tokenLedger.getTotalCirculation(),
                 activeSessions: this.paymentGateway.getActiveSessionCount()
             });
+        });
+
+        // World Boss Endpoints
+
+        // Get boss status
+        this.app.get('/boss/status', (req, res) => {
+            const bossState = worldBossManager.getBossState();
+            const bossSummary = worldBossManager.getBossSummary();
+            const recentAttacks = worldBossManager.getRecentAttacks();
+
+            res.json({
+                boss: bossSummary,
+                state: bossState,
+                recentAttacks
+            });
+        });
+
+        // Attack boss
+        this.app.post('/boss/attack', (req, res) => {
+            const { agentId, damage } = req.body;
+
+            if (!agentId) {
+                return res.status(400).json({ error: 'Agent ID required' });
+            }
+
+            const agent = this.worldState.getAgent(agentId);
+            if (!agent) {
+                return res.status(404).json({ error: 'Agent not found' });
+            }
+
+            // Process attack
+            const attackDamage = damage || Math.floor(Math.random() * 90) + 10;
+            const result = worldBossManager.attackBoss(agentId, attackDamage);
+
+            // Log event
+            this.worldState.addEvent({
+                type: 'boss_attack' as any,
+                agentId,
+                timestamp: Date.now(),
+                description: result.message
+            });
+
+            res.json({
+                success: result.success,
+                message: result.message,
+                boss: {
+                    health: result.remainingHealth,
+                    isDefeated: result.isDefeated
+                }
+            });
+        });
+
+        // Spawn new boss
+        this.app.post('/boss/spawn', (req, res) => {
+            worldBossManager.spawnBoss();
+            const bossSummary = worldBossManager.getBossSummary();
+
+            this.worldState.addEvent({
+                type: 'boss_spawn' as any,
+                agentId: 'system',
+                timestamp: Date.now(),
+                description: 'The Titan has emerged from the depths!'
+            });
+
+            res.json({
+                success: true,
+                message: 'Boss spawned successfully',
+                boss: bossSummary
+            });
+        });
+
+        // Faction Endpoints
+
+        // Join faction
+        this.app.post('/faction/join', (req, res) => {
+            const { agentId, faction } = req.body;
+
+            if (!agentId || !faction) {
+                return res.status(400).json({ error: 'Agent ID and faction required' });
+            }
+
+            const agent = this.worldState.getAgent(agentId);
+            if (!agent) {
+                return res.status(404).json({ error: 'Agent not found' });
+            }
+
+            const result = factionManager.joinFaction(agentId, faction as Faction);
+
+            res.json({
+                success: result.success,
+                message: result.message,
+                bonuses: result.bonuses
+            });
+        });
+
+        // Get faction status
+        this.app.get('/faction/status/:agentId', (req, res) => {
+            const agentId = req.params.agentId;
+            const faction = factionManager.getAgentFaction(agentId);
+            const bonuses = factionManager.getFactionBonuses(agentId);
+            const points = factionManager.getAgentPoints(agentId);
+
+            res.json({
+                faction,
+                bonuses,
+                points
+            });
+        });
+
+        // Get faction leaderboard
+        this.app.get('/faction/leaderboard', (req, res) => {
+            const summary = factionManager.getFactionSummary();
+            res.json(summary);
+        });
+
+        // PvP Arena Endpoints
+
+        // Create arena challenge
+        this.app.post('/arena/challenge', (req, res) => {
+            const { agentId, wager } = req.body;
+
+            if (!agentId || !wager) {
+                return res.status(400).json({ error: 'Agent ID and wager required' });
+            }
+
+            const result = pvpArenaManager.createChallenge(agentId, wager);
+            res.json(result);
+        });
+
+        // Accept arena challenge
+        this.app.post('/arena/accept', (req, res) => {
+            const { battleId, agentId } = req.body;
+
+            if (!battleId || !agentId) {
+                return res.status(400).json({ error: 'Battle ID and agent ID required' });
+            }
+
+            const result = pvpArenaManager.acceptChallenge(battleId, agentId);
+            res.json(result);
+        });
+
+        // Fight in arena
+        this.app.post('/arena/fight', (req, res) => {
+            const { battleId } = req.body;
+
+            if (!battleId) {
+                return res.status(400).json({ error: 'Battle ID required' });
+            }
+
+            const result = pvpArenaManager.simulateCombat(battleId);
+            res.json(result);
+        });
+
+        // Place spectator bet
+        this.app.post('/arena/bet', (req, res) => {
+            const { battleId, spectator, betOn, amount } = req.body;
+
+            if (!battleId || !spectator || !betOn || !amount) {
+                return res.status(400).json({ error: 'All fields required' });
+            }
+
+            const result = pvpArenaManager.placeBet(battleId, spectator, betOn, amount);
+            res.json(result);
+        });
+
+        // Get open battles
+        this.app.get('/arena/battles/open', (req, res) => {
+            const battles = pvpArenaManager.getOpenBattles();
+            res.json(battles);
+        });
+
+        // Get active battles
+        this.app.get('/arena/battles/active', (req, res) => {
+            const battles = pvpArenaManager.getActiveBattles();
+            res.json(battles);
+        });
+
+        // Season Endpoints
+
+        // Get current season
+        this.app.get('/season/current', (req, res) => {
+            const summary = seasonManager.getSeasonSummary();
+            res.json(summary);
+        });
+
+        // Get season leaderboard
+        this.app.get('/season/leaderboard', (req, res) => {
+            const limit = parseInt(req.query.limit as string) || 10;
+            const leaderboard = seasonManager.getLeaderboard(limit);
+            res.json(leaderboard);
+        });
+
+        // Get agent rank
+        this.app.get('/season/rank/:agentId', (req, res) => {
+            const rank = seasonManager.getAgentRank(req.params.agentId);
+            res.json(rank);
+        });
+
+        // Get agent prestige
+        this.app.get('/season/prestige/:agentId', (req, res) => {
+            const prestige = seasonManager.getPrestige(req.params.agentId);
+            res.json({ prestige });
         });
     }
 

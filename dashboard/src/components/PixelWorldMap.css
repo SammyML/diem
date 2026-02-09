@@ -1,0 +1,226 @@
+.pixel-world-container {
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    border: 2px solid #4a4a6a;
+}
+
+.world-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #4a4a6a;
+}
+
+.pixel-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 24px;
+    color: #00ff88;
+    text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88;
+    letter-spacing: 3px;
+}
+
+.season-info {
+    display: flex;
+    gap: 15px;
+}
+
+.season-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: bold;
+    color: white;
+    font-size: 12px;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.entry-fee {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: bold;
+    color: white;
+    font-size: 12px;
+    box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
+}
+
+.world-canvas {
+    background: #1a1a2e;
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+}
+
+.world-map {
+    display: block;
+    margin: 0 auto;
+}
+
+.location-circle {
+    fill: #2a2a4a;
+    stroke: #4a4a6a;
+    stroke-width: 3;
+    transition: all 0.3s ease;
+}
+
+.location-circle.active {
+    fill: #00ff88;
+    stroke: #00cc66;
+    filter: drop-shadow(0 0 10px #00ff88);
+}
+
+.location-circle:hover {
+    fill: #3a3a5a;
+    stroke: #6a6a8a;
+    cursor: pointer;
+}
+
+.location-name {
+    fill: #ffffff;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.agent-count {
+    fill: #00ff88;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.boss-circle {
+    fill: #ff0055;
+    stroke: #cc0044;
+    stroke-width: 4;
+    filter: drop-shadow(0 0 20px #ff0055);
+}
+
+.boss-circle.pulsing {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
+}
+
+.boss-text {
+    fill: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.boss-health {
+    fill: #ffaa00;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.boss-health-bar {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid #ff0055;
+    min-width: 250px;
+}
+
+.boss-name {
+    color: #ff0055;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px #ff0055;
+}
+
+.health-bar-container {
+    position: relative;
+    background: #2a2a4a;
+    height: 30px;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 2px solid #4a4a6a;
+}
+
+.health-bar-fill {
+    background: linear-gradient(90deg, #ff0055, #ff4488);
+    height: 100%;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 20px #ff0055;
+}
+
+.health-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    text-shadow: 0 0 4px black;
+}
+
+.boss-participants {
+    color: #00ff88;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 8px;
+}
+
+.world-footer {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 2px solid #4a4a6a;
+}
+
+.legend {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ffffff;
+    font-size: 12px;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #4a4a6a;
+}
+
+.legend-color.active {
+    background: #00ff88;
+    box-shadow: 0 0 10px #00ff88;
+}
+
+.legend-color.boss {
+    background: #ff0055;
+    box-shadow: 0 0 10px #ff0055;
+}

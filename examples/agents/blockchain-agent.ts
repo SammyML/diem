@@ -128,8 +128,58 @@ class BlockchainAgent {
         console.log(`   Actions: ${stats.actionCount}`);
     }
 
+    /**
+     * Wait helper
+     */
     async wait(ms: number): Promise<void> {
-        await new Promise(resolve => setTimeout(resolve, ms));
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    /**
+     * Join a faction
+     */
+    async joinFaction(faction: string): Promise<void> {
+        console.log(`\n ${this.name} joining faction: ${faction}...`);
+
+        try {
+            const response = await axios.post(`${this.apiUrl}/faction/join`, {
+                agentId: this.agentId || this.wallet.address.toLowerCase(),
+                faction
+            });
+
+            if (response.data.success) {
+                console.log(`   ${response.data.message}`);
+                console.log(`   Bonuses:`, response.data.bonuses);
+            }
+        } catch (error: any) {
+            console.error(`   Faction join failed: ${error.message}`);
+        }
+    }
+
+    /**
+     * Attack the world boss
+     */
+    async attackBoss(): Promise<void> {
+        console.log(`\n ${this.name} attacking The Titan...`);
+
+        try {
+            const damage = Math.floor(Math.random() * 90) + 10; // 10-100 damage
+            const response = await axios.post(`${this.apiUrl}/boss/attack`, {
+                agentId: this.agentId || this.wallet.address.toLowerCase(),
+                damage
+            });
+
+            if (response.data.success) {
+                console.log(`   ${response.data.message}`);
+                console.log(`   Boss Health: ${response.data.boss.health}`);
+
+                if (response.data.boss.isDefeated) {
+                    console.log(`   THE TITAN HAS BEEN DEFEATED!`);
+                }
+            }
+        } catch (error: any) {
+            console.error(`   Boss attack failed: ${error.message}`);
+        }
     }
 }
 

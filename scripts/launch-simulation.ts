@@ -62,84 +62,61 @@ async function launchSimulation() {
 
     console.log('\nAll agents launched! Monitoring activity...\n');
 
-    // Keep script alive
-    await new Promise(() => { });
+    console.log(`\nAll agents spawned. Simulation running...\n`);
 }
 
 async function runAgentLoop(agent: BlockchainAgent, config: any) {
+    // Join faction on entry
+    const factions = ['wardens', 'cult', 'salvagers'];
+    const randomFaction = factions[Math.floor(Math.random() * factions.length)];
+
     try {
-        await agent.wait(Math.random() * 5000); // Stagger start more
-        await agent.enter();
+        await agent.joinFaction(randomFaction);
+        console.log(`[${config.name}] Joined faction: ${randomFaction}`);
+    } catch (e: any) {
+        console.log(`[${config.name}] Faction join skipped: ${e.message}`);
+    }
 
-        let cycles = 0;
-        while (true) {
-            cycles++;
-            console.log(`\n[${config.name}] Action Cycle ${cycles}`);
+    let actionCount = 0;
 
-            if (config.role === 'miner') {
-                console.log(`[${config.name}] Thinking: Inventory low. Need to gather Ore at Mining Caves.`);
-                await agent.performAction('move', { targetLocationId: 'mining_caves' });
-                await agent.wait(5000);
+    while (true) {
+        try {
+            await new Promise(resolve => setTimeout(resolve, 5000 + Math.random() * 5000));
 
-                console.log(`[${config.name}] Thinking: Arrived. Extracting resources...`);
-                await agent.performAction('gather', { targetResourceType: 'ore' });
-                await agent.wait(5000);
+            actionCount++;
 
-                console.log(`[${config.name}] Thinking: Returning to Market to sell goods.`);
-                await agent.performAction('move', { targetLocationId: 'market_square' });
-                await agent.wait(5000);
-
-                // Maybe gather again 50% chance
-                if (Math.random() > 0.5) {
-                    console.log(`[${config.name}] Thinking: Market is crowded. Decided to mine more before selling.`);
-                    await agent.performAction('move', { targetLocationId: 'mining_caves' });
-                    await agent.wait(5000);
-                    await agent.performAction('gather', { targetResourceType: 'ore' });
-                } else {
-                    console.log(`[${config.name}] Thinking: Rest is needed. Staying at Market.`);
+            // Every 5th action, attack the boss
+            if (actionCount % 5 === 0) {
+                console.log(`[${config.name}] Coordinating boss attack...`);
+                try {
+                    await agent.attackBoss();
+                } catch (e: any) {
+                    console.log(`[${config.name}] Boss attack failed: ${e.message}`);
                 }
+                continue;
+            }
 
+            // Regular actions based on role
+            if (config.role === 'miner') {
+                console.log(`[${config.name}] Thinking: Need to mine ore...`);
+                await agent.performAction('move', { targetLocationId: config.target });
+                await agent.performAction('gather', { targetResourceType: config.resource });
             } else if (config.role === 'gatherer') {
-                console.log(`[${config.name}] Thinking: Order received for Wood. Heading to Forest.`);
-                await agent.performAction('move', { targetLocationId: 'forest' });
-                await agent.wait(5000);
-
-                console.log(`[${config.name}] Thinking: Gathering timber...`);
-                await agent.performAction('gather', { targetResourceType: 'wood' });
-                await agent.wait(5000);
-
-                console.log(`[${config.name}] Thinking: Also spotting Herbs. Gathering them too for efficiency.`);
-                await agent.performAction('gather', { targetResourceType: 'herbs' });
-
+                console.log(`[${config.name}] Thinking: Gathering resources...`);
+                await agent.performAction('move', { targetLocationId: config.target });
+                await agent.performAction('gather', { targetResourceType: config.resource });
             } else if (config.role === 'trader') {
                 console.log(`[${config.name}] Thinking: Monitoring market prices...`);
-                await agent.performAction('move', { targetLocationId: 'market_square' });
-                await agent.wait(5000);
-
-                // Perform Trade
-                console.log(`[${config.name}] Thinking: Listing items on Marketplace.`);
-                await agent.performAction('trade', { type: 'list_item', item: 'Wood', price: 10 });
-                await agent.wait(5000);
-
-                console.log(`[${config.name}] Thinking: Opportunity detected at Workshop. Moving to craft.`);
-                await agent.performAction('move', { targetLocationId: 'workshop' });
-                await agent.wait(5000);
-
-                // Perform Craft
-                console.log(`[${config.name}] Thinking: Crafting Tools...`);
-                await agent.performAction('craft', { item: 'Iron Pickaxe' });
-                await agent.wait(5000);
-
-                console.log(`[${config.name}] Thinking: Stamina low. Moving to Tavern to rest.`);
-                await agent.performAction('move', { targetLocationId: 'tavern' });
-                await agent.performAction('rest');
+                await agent.performAction('move', { targetLocationId: config.target });
+                await agent.performAction('trade', { itemId: 'wood', quantity: 1, price: 10 });
+                await agent.performAction('craft', { itemId: 'tool', quantity: 1 });
             }
 
             await agent.wait(8000); // Increased loop delay
+        } catch (error: any) {
+            console.error(`[${config.name}] Error: ${error.message}`);
+            await new Promise(resolve => setTimeout(resolve, 10000));
         }
-
-    } catch (error: any) {
-        console.error(`❌ [${config.name}] Error:`, error.message);
     }
 }
 
