@@ -106,6 +106,19 @@ export const LOCATIONS: Location[] = [
             allowsCrafting: true,
             craftingBonus: 1.1 // 10% better success rate
         }
+    },
+    {
+        id: 'arena',
+        name: 'The Arena',
+        description: 'A brutal proving ground where agents fight for glory and MON. Winner takes all.',
+        capacity: 50,
+        currentOccupancy: 0,
+        resources: [],
+        connectedTo: ['market_square'],
+        properties: {
+            isPvPZone: true,
+            combatBonus: 1.0
+        }
     }
 ];
 

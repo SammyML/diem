@@ -228,7 +228,14 @@ export class ApiServer {
                         gatheringSkill: 0,
                         craftingSkill: 0,
                         tradingSkill: 0,
-                        totalActions: 0
+                        totalActions: 0,
+                        // Combat Init
+                        hp: 100,
+                        maxHp: 100,
+                        attack: 10,
+                        defense: 5,
+                        wins: 0,
+                        losses: 0
                     },
                     joinedAt: Date.now(),
                     lastAction: Date.now()
@@ -448,7 +455,44 @@ export class ApiServer {
                 return res.status(400).json({ error: 'Battle ID required' });
             }
 
-            const result = pvpArenaManager.simulateCombat(battleId);
+            const battle = pvpArenaManager.getBattle(battleId);
+            if (!battle || !battle.challenger || !battle.opponent) {
+                return res.status(400).json({ error: 'Invalid battle or missing participants' });
+            }
+
+            const challenger = this.worldState.getAgent(battle.challenger);
+            const opponent = this.worldState.getAgent(battle.opponent);
+
+            if (!challenger || !opponent) {
+                return res.status(404).json({ error: 'One or more agents not found' });
+            }
+
+            const result = pvpArenaManager.simulateCombat(battleId, challenger, opponent);
+
+            // If combat finished, update World State (HP, Mon, etc)
+            if (result.success && result.winner) {
+                // Award winner (already handled in manager? No, manager returns result)
+                // We need to apply the payouts here or in manager?
+                // Manager calculatePayouts exists.
+
+                const payouts = pvpArenaManager.calculatePayouts(battleId);
+
+                // Pay Winner
+                this.tokenLedger.award(result.winner, payouts.winnerPayout, `Arena Win: ${battleId}`);
+                this.worldState.updateMonBalance(result.winner, payouts.winnerPayout, 'arena_win');
+                this.worldState.updateStats(result.winner, { wins: (this.worldState.getAgent(result.winner)?.stats.wins || 0) + 1 });
+
+                const loser = result.winner === challenger.id ? opponent.id : challenger.id;
+                this.worldState.updateStats(loser, { losses: (this.worldState.getAgent(loser)?.stats.losses || 0) + 1 });
+
+                // Pay Spectators
+                payouts.spectatorPayouts.forEach((amount, spectatorId) => {
+                    this.tokenLedger.award(spectatorId, amount, `Arena Bet Win: ${battleId}`);
+                });
+
+                result.message += ` Payouts distributed. Winner gets ${payouts.winnerPayout} MON.`;
+            }
+
             res.json(result);
         });
 

@@ -97,7 +97,10 @@ export class PvPArenaManager {
     /**
      * Simulate combat between two agents
      */
-    public simulateCombat(battleId: string): {
+    /**
+     * Simulate combat between two agents
+     */
+    public simulateCombat(battleId: string, challengerAgent: any, opponentAgent: any): {
         success: boolean;
         winner?: string;
         log?: string[];
@@ -109,19 +112,19 @@ export class PvPArenaManager {
             return { success: false, message: 'Invalid battle state' };
         }
 
-        // Simple combat simulation
+        // Use REAL Agent Stats
         const challengerStats: CombatStats = {
-            attack: 50 + Math.random() * 50,
-            defense: 30 + Math.random() * 30,
-            health: 100,
-            critChance: 0.2
+            attack: challengerAgent.stats.attack,
+            defense: challengerAgent.stats.defense,
+            health: challengerAgent.stats.hp,
+            critChance: 0.1 // Base 10%
         };
 
         const opponentStats: CombatStats = {
-            attack: 50 + Math.random() * 50,
-            defense: 30 + Math.random() * 30,
-            health: 100,
-            critChance: 0.2
+            attack: opponentAgent.stats.attack,
+            defense: opponentAgent.stats.defense,
+            health: opponentAgent.stats.hp,
+            critChance: 0.1
         };
 
         const log: string[] = [];

@@ -13,6 +13,7 @@
     "agent:miner": "ts-node examples/agents/miner-agent.ts",
     "agent:trader": "ts-node examples/agents/trader-agent.ts",
     "agent:crafter": "ts-node examples/agents/crafter-agent.ts",
+    "agent:arena": "ts-node examples/agents/arena-agent.ts",
     "agent:blockchain": "ts-node examples/agents/blockchain-agent.ts",
     "test": "jest",
     "test:integration": "jest --testPathPattern=integration",

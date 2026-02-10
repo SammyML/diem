@@ -1,4 +1,13 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { createServer } from 'http';
+// ... imports
+
+// ...
+
+// Start server
+const PORT = process.env.PORT || process.env.API_PORT || 3000;
 import { WorldStateManager } from './core/world-state';
 import { TokenLedger } from './token/token-ledger';
 import { PaymentGateway } from './token/payment-gateway';
@@ -33,7 +42,8 @@ async function main() {
     const wsServer = new WebSocketServer(httpServer, worldState);
 
     // Start server
-    const PORT = process.env.PORT || 3000;
+    // Start server
+    const PORT = process.env.PORT || process.env.API_PORT || 3000;
     httpServer.listen(PORT, () => {
         console.log('Diem Virtual World is running!\n');
         console.log(`API Server: http://localhost:${PORT}`);

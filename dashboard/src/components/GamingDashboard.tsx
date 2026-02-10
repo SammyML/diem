@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { PixelWorldMap } from './PixelWorldMap';
 import { FactionLeaderboard } from './FactionLeaderboard';
 import { ArenaView } from './ArenaView';
+import AgentList from './AgentList';
 import './GamingDashboard.css';
 
 interface Stats {
@@ -28,6 +29,7 @@ export const GamingDashboard: React.FC = () => {
         totalMonInCirculation: 0
     });
     const [season, setSeason] = useState<SeasonInfo | null>(null);
+    const [agents, setAgents] = useState<Record<string, any>>({});
     const [animatedStats, setAnimatedStats] = useState<Stats>(stats);
 
     useEffect(() => {
@@ -89,6 +91,12 @@ export const GamingDashboard: React.FC = () => {
                 daysRemaining: seasonData.daysRemaining,
                 totalParticipants: seasonData.totalParticipants
             });
+
+            // Fetch world state for agents
+            const worldRes = await fetch(`${API_URL}/world/state`);
+            const worldData = await worldRes.json();
+            setAgents(worldData.agents || {});
+
         } catch (error) {
             console.error('Failed to fetch dashboard data:', error);
         }
@@ -167,6 +175,8 @@ export const GamingDashboard: React.FC = () => {
                 {/* Right Column */}
                 <div className="grid-column right">
                     <FactionLeaderboard />
+                    <div className="spacer"></div>
+                    <AgentList agents={agents} />
                     <div className="spacer"></div>
                     <ArenaView />
                 </div>

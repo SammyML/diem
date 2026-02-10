@@ -58,6 +58,13 @@ export interface AgentStats {
     gatheringSkill: number;
     craftingSkill: number;
     tradingSkill: number;
+    // Combat Stats
+    hp: number;
+    maxHp: number;
+    attack: number;
+    defense: number;
+    wins: number;
+    losses: number;
     totalActions: number;
 }
 
@@ -87,7 +94,9 @@ export enum EventType {
     ITEM_CRAFTED = 'item_crafted',
     TRADE_COMPLETED = 'trade_completed',
     MON_EARNED = 'mon_earned',
-    MON_SPENT = 'mon_spent'
+    MON_SPENT = 'mon_spent',
+    AGENT_ATTACKED = 'agent_attacked',
+    AGENT_DEFEATED = 'agent_defeated'
 }
 
 export interface EconomicStats {
@@ -103,6 +112,7 @@ export interface AgentAction {
     agentId: string;
     type: ActionType;
     targetLocationId?: string;
+    // targetAgentId removed
     targetResourceType?: ResourceType;
     craftingRecipe?: string;
     tradeOffer?: TradeOffer;
@@ -113,6 +123,7 @@ export enum ActionType {
     GATHER = 'gather',
     CRAFT = 'craft',
     TRADE = 'trade',
+    FIGHT = 'fight',
     REST = 'rest'
 }
 

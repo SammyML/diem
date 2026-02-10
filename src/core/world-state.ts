@@ -135,7 +135,14 @@ export class WorldStateManager {
                 gatheringSkill: 0,
                 craftingSkill: 0,
                 tradingSkill: 0,
-                totalActions: 0
+                totalActions: 0,
+                // Combat Init
+                hp: 100,
+                maxHp: 100,
+                attack: 10,
+                defense: 5,
+                wins: 0,
+                losses: 0
             },
             joinedAt: Date.now(),
             lastAction: Date.now()
