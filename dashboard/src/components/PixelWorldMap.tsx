@@ -36,9 +36,10 @@ export const PixelWorldMap: React.FC = () => {
     }, []);
 
     const fetchWorldData = async () => {
+        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
         try {
             // Fetch locations
-            const locRes = await fetch('http://localhost:3000/world/locations');
+            const locRes = await fetch(`${API_URL}/world/locations`);
             const locData = await locRes.json();
 
             // Map locations to pixel positions
@@ -52,7 +53,7 @@ export const PixelWorldMap: React.FC = () => {
             setLocations(mappedLocations);
 
             // Fetch boss status
-            const bossRes = await fetch('http://localhost:3000/boss/status');
+            const bossRes = await fetch(`${API_URL}/boss/status`);
             const bossData = await bossRes.json();
             setBoss(bossData.boss);
 

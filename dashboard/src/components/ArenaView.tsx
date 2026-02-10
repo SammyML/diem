@@ -21,12 +21,13 @@ export const ArenaView: React.FC = () => {
     }, []);
 
     const fetchBattles = async () => {
+        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
         try {
-            const openRes = await fetch('http://localhost:3000/arena/battles/open');
+            const openRes = await fetch(`${API_URL}/arena/battles/open`);
             const openData = await openRes.json();
             setOpenBattles(openData);
 
-            const activeRes = await fetch('http://localhost:3000/arena/battles/active');
+            const activeRes = await fetch(`${API_URL}/arena/battles/active`);
             const activeData = await activeRes.json();
             setActiveBattles(activeData);
         } catch (error) {

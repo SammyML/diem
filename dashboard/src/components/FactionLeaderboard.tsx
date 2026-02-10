@@ -18,8 +18,9 @@ export const FactionLeaderboard: React.FC = () => {
     }, []);
 
     const fetchFactionData = async () => {
+        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
         try {
-            const res = await fetch('http://localhost:3000/faction/leaderboard');
+            const res = await fetch(`${API_URL}/faction/leaderboard`);
             const data = await res.json();
             setFactions(data.factions || []);
         } catch (error) {

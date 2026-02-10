@@ -65,14 +65,15 @@ export const GamingDashboard: React.FC = () => {
     }, [stats]);
 
     const fetchData = async () => {
+        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
         try {
             // Fetch economy stats
-            const statsRes = await fetch('http://localhost:3000/economy/stats');
+            const statsRes = await fetch(`${API_URL}/economy/stats`);
             const statsData = await statsRes.json();
             setStats(statsData);
 
             // Fetch season info
-            const seasonRes = await fetch('http://localhost:3000/season/current');
+            const seasonRes = await fetch(`${API_URL}/season/current`);
             const seasonData = await seasonRes.json();
             setSeason({
                 seasonId: seasonData.season.seasonId,
