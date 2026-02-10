@@ -348,14 +348,6 @@ export class ApiServer {
             const attackDamage = damage || Math.floor(Math.random() * 90) + 10;
             const result = worldBossManager.attackBoss(agentId, attackDamage);
 
-            // Log event
-            this.worldState.addEvent({
-                type: 'boss_attack' as any,
-                agentId,
-                timestamp: Date.now(),
-                description: result.message
-            });
-
             res.json({
                 success: result.success,
                 message: result.message,
@@ -370,13 +362,6 @@ export class ApiServer {
         this.app.post('/boss/spawn', (req, res) => {
             worldBossManager.spawnBoss();
             const bossSummary = worldBossManager.getBossSummary();
-
-            this.worldState.addEvent({
-                type: 'boss_spawn' as any,
-                agentId: 'system',
-                timestamp: Date.now(),
-                description: 'The Titan has emerged from the depths!'
-            });
 
             res.json({
                 success: true,
