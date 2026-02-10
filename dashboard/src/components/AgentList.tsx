@@ -48,20 +48,20 @@ const AgentList: React.FC<Props> = ({ agents }) => {
                             <div className="agent-info">
                                 <div className="agent-header">
                                     <span className="agent-name">{agent.name}</span>
-                                    {agent.locationId === 'arena' && <span className="arena-badge">⚔️ In Arena</span>}
+                                    {agent.locationId === 'arena' && <span className="arena-badge">IN ARENA</span>}
                                 </div>
                                 <div className="agent-stats-row">
                                     <span className="stat-pill">
-                                        ❤️ {agent.stats?.hp ?? 100}/{agent.stats?.maxHp ?? 100}
+                                        HP {agent.stats?.hp ?? 100}/{agent.stats?.maxHp ?? 100}
                                     </span>
                                     <span className="stat-pill">
-                                        ⚔️ {agent.stats?.attack ?? 10}
+                                        ATK {agent.stats?.attack ?? 10}
                                     </span>
                                     <span className="stat-pill">
-                                        🛡️ {agent.stats?.defense ?? 5}
+                                        DEF {agent.stats?.defense ?? 5}
                                     </span>
                                     <span className="stat-pill win-record">
-                                        🏆 {agent.stats?.wins ?? 0}W - {agent.stats?.losses ?? 0}L
+                                        {agent.stats?.wins ?? 0}W - {agent.stats?.losses ?? 0}L
                                     </span>
                                 </div>
                             </div>

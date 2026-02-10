@@ -9,7 +9,7 @@ interface Agent {
 
 async function runTraderAgent() {
     const agentName = `Trader_${Math.floor(Math.random() * 1000)}`;
-    console.log(`\n💰 ${agentName} starting up...`);
+    console.log(`\n${agentName} starting up...`);
 
     let inventoryItem: any = null;
 
@@ -25,7 +25,7 @@ async function runTraderAgent() {
 
         const agent: Agent = enterRes.data.agent;
         const sessionToken = enterRes.data.sessionToken;
-        console.log(`✅ entered world with ID: ${agent.id}`);
+        console.log(`Entered world with ID: ${agent.id}`);
 
         // Main loop
         setInterval(async () => {

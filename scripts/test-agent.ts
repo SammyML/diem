@@ -8,7 +8,7 @@ interface Agent {
 }
 
 async function runTestAgent(agentName: string, role: string) {
-    console.log(`\n🤖 ${agentName} (${role}) starting...`);
+    console.log(`\n${agentName} (${role}) starting...`);
 
     try {
         // Enter the world
@@ -18,7 +18,7 @@ async function runTestAgent(agentName: string, role: string) {
         });
 
         const agent: Agent = enterRes.data.agent;
-        console.log(`✅ ${agentName} entered the world! ID: ${agent.id}`);
+        console.log(`${agentName} entered the world! ID: ${agent.id}`);
 
         // Main loop - perform actions every 5 seconds
         setInterval(async () => {
@@ -32,14 +32,14 @@ async function runTestAgent(agentName: string, role: string) {
                         await axios.post(`${API_URL}/agent/${agent.id}/gather`, {
                             locationId: 'mining_caves'
                         });
-                        console.log(`⛏️  ${agentName} gathered resources`);
+                        console.log(`${agentName} gathered resources`);
                         break;
 
                     case 'craft':
                         await axios.post(`${API_URL}/agent/${agent.id}/craft`, {
                             itemType: 'tool'
                         });
-                        console.log(`🔨 ${agentName} crafted an item`);
+                        console.log(`${agentName} crafted an item`);
                         break;
 
                     case 'trade':
@@ -69,6 +69,6 @@ runTestAgent(agentName, role);
 
 // Keep process alive
 process.on('SIGINT', () => {
-    console.log(`\n👋 ${agentName} exiting...`);
+    console.log(`\n${agentName} exiting...`);
     process.exit(0);
 });

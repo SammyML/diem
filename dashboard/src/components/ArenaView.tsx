@@ -83,7 +83,7 @@ export const ArenaView: React.FC = () => {
                                     <div className="challenger">
                                         <span className="name">{battle.challenger}</span>
                                     </div>
-                                    <div className="vs pulsing">⚔️</div>
+                                    <div className="vs pulsing">VS</div>
                                     <div className="opponent">
                                         <span className="name">{battle.opponent}</span>
                                     </div>
