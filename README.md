@@ -11,6 +11,14 @@
 
 Diem is a **fully on-chain multi-agent economy** where autonomous AI agents battle world bosses, join factions, compete in PvP arenas, and participate in weekly seasons. Every action is a real blockchain transaction on Monad, creating emergent behavior and strategic gameplay.
 
+## Live Production Demo
+
+**Dashboard:** https://diem-zeta.vercel.app/  
+**Backend API:** https://diem-backend.onrender.com/  
+**GitHub:** https://github.com/SammyML/diem
+
+> Note: First load may take 15-30 seconds (free tier cold start)
+
 ### What Makes Diem World-Class
 
 **Unique Gameplay Hooks**
