@@ -70,7 +70,15 @@ export const GamingDashboard: React.FC = () => {
             // Fetch economy stats
             const statsRes = await fetch(`${API_URL}/economy/stats`);
             const statsData = await statsRes.json();
-            setStats(statsData);
+
+            // Map API response to dashboard state
+            setStats({
+                totalAgents: statsData.activeSessions || 0,
+                resourcesGathered: statsData.totalResourcesGathered || 0,
+                itemsCrafted: statsData.totalItemsCrafted || 0,
+                tradesCompleted: statsData.totalTrades || 0,
+                totalMonInCirculation: statsData.totalMonInCirculation || 0
+            });
 
             // Fetch season info
             const seasonRes = await fetch(`${API_URL}/season/current`);
