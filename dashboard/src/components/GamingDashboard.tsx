@@ -128,28 +128,28 @@ export const GamingDashboard: React.FC = () => {
                     <div className="stat-icon">⛏️</div>
                     <div className="stat-content">
                         <div className="stat-label">Resources Gathered</div>
-                        <div className="stat-value">{animatedStats.resourcesGathered.toLocaleString()}</div>
+                        <div className="stat-value">{(animatedStats.resourcesGathered ?? 0).toLocaleString()}</div>
                     </div>
                 </div>
                 <div className="stat-card">
                     <div className="stat-icon">🔨</div>
                     <div className="stat-content">
                         <div className="stat-label">Items Crafted</div>
-                        <div className="stat-value">{animatedStats.itemsCrafted.toLocaleString()}</div>
+                        <div className="stat-value">{(animatedStats.itemsCrafted ?? 0).toLocaleString()}</div>
                     </div>
                 </div>
                 <div className="stat-card">
-                    <div className="stat-icon">💰</div>
+                    <div className="stat-icon">🤝</div>
                     <div className="stat-content">
                         <div className="stat-label">Trades Completed</div>
-                        <div className="stat-value">{animatedStats.tradesCompleted.toLocaleString()}</div>
+                        <div className="stat-value">{(animatedStats.tradesCompleted ?? 0).toLocaleString()}</div>
                     </div>
                 </div>
                 <div className="stat-card highlight">
                     <div className="stat-icon">💎</div>
                     <div className="stat-content">
                         <div className="stat-label">MON in Circulation</div>
-                        <div className="stat-value">{animatedStats.totalMonInCirculation.toLocaleString()}</div>
+                        <div className="stat-value">{(animatedStats.totalMonInCirculation ?? 0).toLocaleString()}</div>
                     </div>
                 </div>
             </div>
