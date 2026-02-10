@@ -126,37 +126,32 @@ export const GamingDashboard: React.FC = () => {
             {/* Stats Bar */}
             <div className="stats-bar">
                 <div className="stat-card">
-                    <div className="stat-icon">👥</div>
+                    <div className="stat-label-text">AGENTS</div>
                     <div className="stat-content">
-                        <div className="stat-label">Active Agents</div>
                         <div className="stat-value">{animatedStats.totalAgents}</div>
                     </div>
                 </div>
                 <div className="stat-card">
-                    <div className="stat-icon">⛏️</div>
+                    <div className="stat-label-text">GATHERED</div>
                     <div className="stat-content">
-                        <div className="stat-label">Resources Gathered</div>
                         <div className="stat-value">{(animatedStats.resourcesGathered ?? 0).toLocaleString()}</div>
                     </div>
                 </div>
                 <div className="stat-card">
-                    <div className="stat-icon">🔨</div>
+                    <div className="stat-label-text">CRAFTED</div>
                     <div className="stat-content">
-                        <div className="stat-label">Items Crafted</div>
                         <div className="stat-value">{(animatedStats.itemsCrafted ?? 0).toLocaleString()}</div>
                     </div>
                 </div>
                 <div className="stat-card">
-                    <div className="stat-icon">🤝</div>
+                    <div className="stat-label-text">TRADES</div>
                     <div className="stat-content">
-                        <div className="stat-label">Trades Completed</div>
                         <div className="stat-value">{(animatedStats.tradesCompleted ?? 0).toLocaleString()}</div>
                     </div>
                 </div>
                 <div className="stat-card highlight">
-                    <div className="stat-icon">💎</div>
+                    <div className="stat-label-text">MON</div>
                     <div className="stat-content">
-                        <div className="stat-label">MON in Circulation</div>
                         <div className="stat-value">{(animatedStats.totalMonInCirculation ?? 0).toLocaleString()}</div>
                     </div>
                 </div>

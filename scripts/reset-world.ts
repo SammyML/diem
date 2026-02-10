@@ -7,28 +7,28 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 async function resetWorld() {
-    console.log('🔄  Starting World Reset Process...\n');
+    console.log('Starting World Reset Process...\n');
 
     // 1. Clear Local State
     const dataDir = path.join(__dirname, '../data');
     const stateFile = path.join(dataDir, 'world-state.json');
 
-    console.log('🗑️   Clearing local world state...');
+    console.log('Clearing local world state...');
     if (fs.existsSync(stateFile)) {
         fs.unlinkSync(stateFile);
-        console.log('    ✅ Deleted data/world-state.json');
+        console.log('    Deleted data/world-state.json');
     } else {
-        console.log('    ✅ No existing state file found');
+        console.log('    No existing state file found');
     }
 
     // 2. Redeploy Contracts
-    console.log('\n⛓️   Redeploying Smart Contracts (this may take a minute)...');
+    console.log('\nRedeploying Smart Contracts (this may take a minute)...');
     try {
         // Execute the deploy script defined in package.json
         execSync('npm run contracts:deploy', { stdio: 'inherit' });
-        console.log('    ✅ Contracts deployed successfully');
+        console.log('    Contracts deployed successfully');
     } catch (error) {
-        console.error('    ❌ Failed to deploy contracts');
+        console.error('    Failed to deploy contracts');
         process.exit(1);
     }
 

@@ -37,15 +37,6 @@ export const FactionLeaderboard: React.FC = () => {
         }
     };
 
-    const getFactionIcon = (faction: string) => {
-        switch (faction) {
-            case 'wardens': return '🛡️';
-            case 'cult': return '💰';
-            case 'salvagers': return '⚔️';
-            default: return '❓';
-        }
-    };
-
     const getFactionName = (faction: string) => {
         switch (faction) {
             case 'wardens': return 'THE WARDENS';
@@ -57,16 +48,10 @@ export const FactionLeaderboard: React.FC = () => {
 
     return (
         <div className="faction-leaderboard">
-            <h2 className="faction-title">FACTION WAR</h2>
-            <div className="faction-list">
+            <h2 className="leaderboard-title">Faction Leaderboard</h2>
+            <div className="leaderboard-list">
                 {factions.map((faction, index) => (
-                    <div
-                        key={faction.faction}
-                        className="faction-card"
-                        style={{ borderColor: getFactionColor(faction.faction) }}
-                    >
-                        <div className="faction-rank">#{index + 1}</div>
-                        <div className="faction-icon">{getFactionIcon(faction.faction)}</div>
+                    <div key={faction.faction} className="faction-item">
                         <div className="faction-info">
                             <div
                                 className="faction-name"
@@ -89,9 +74,9 @@ export const FactionLeaderboard: React.FC = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div >
                 ))}
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };

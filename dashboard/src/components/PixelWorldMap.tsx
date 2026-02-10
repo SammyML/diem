@@ -117,13 +117,13 @@ export const PixelWorldMap: React.FC = () => {
                         <g className="boss-indicator">
                             <circle
                                 cx="400"
-                                cy="300"
+                                cy="500"
                                 r="50"
                                 className="boss-circle pulsing"
                             />
                             <text
                                 x="400"
-                                y="300"
+                                y="500"
                                 className="boss-text"
                                 textAnchor="middle"
                             >
@@ -131,7 +131,7 @@ export const PixelWorldMap: React.FC = () => {
                             </text>
                             <text
                                 x="400"
-                                y="320"
+                                y="520"
                                 className="boss-health"
                                 textAnchor="middle"
                             >
