@@ -1,9 +1,10 @@
 {
   "network": "monad-testnet",
-  "timestamp": "2026-02-09T12:59:09.516Z",
+  "timestamp": "2026-02-10T08:42:19.462Z",
   "contracts": {
-    "MONToken": "0x0C31e4b4D5211aD2c366b8df9fa5e99A1Ab5d465",
-    "WorldTreasury": "0x5994FbBfB6e53c6AF22Ae5866A9e67ceEcc1fc8b",
-    "AgentMarketplace": "0xD1Abfc2988e55b546BF9F1fe5dd5a8Fe7ebaa08e"
+    "MONToken": "0x70D607B784110Bf0E06AE6908f225cf7d093E16C",
+    "WorldTreasury": "0x9803725D9b8818C5E2dd043D33699D695bffAB37",
+    "AgentMarketplace": "0x2B5b41de61EF0990954C1E949bc4e03C4F6ed3e3",
+    "WorldBoss": "0x3358B9C6848C83AAfc0b2beD3aa3C6fD34aa89a7"
   }
 }

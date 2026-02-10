@@ -61,6 +61,14 @@ async function main() {
     const agentMarketplaceAddress = await agentMarketplace.getAddress();
     console.log(" AgentMarketplace deployed to:", agentMarketplaceAddress);
 
+    // Deploy WorldBoss
+    console.log("\n Deploying WorldBoss...");
+    const WorldBoss = await ethers.getContractFactory("WorldBoss");
+    const worldBoss = await WorldBoss.deploy();
+    await worldBoss.waitForDeployment();
+    const worldBossAddress = await worldBoss.getAddress();
+    console.log(" WorldBoss deployed to:", worldBossAddress);
+
     // Set WorldTreasury address in MONToken
     console.log("\n Configuring contracts...");
     const tx = await monToken.setWorldTreasury(worldTreasuryAddress);
@@ -85,6 +93,7 @@ async function main() {
     console.log(`MONToken:          ${monTokenAddress}`);
     console.log(`WorldTreasury:     ${worldTreasuryAddress}`);
     console.log(`AgentMarketplace:  ${agentMarketplaceAddress}`);
+    console.log(`WorldBoss:         ${worldBossAddress}`);
 
     // Save deployment addresses
     const fs = require("fs");
@@ -94,7 +103,8 @@ async function main() {
         contracts: {
             MONToken: monTokenAddress,
             WorldTreasury: worldTreasuryAddress,
-            AgentMarketplace: agentMarketplaceAddress
+            AgentMarketplace: agentMarketplaceAddress,
+            WorldBoss: worldBossAddress
         }
     };
 

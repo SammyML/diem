@@ -28,5 +28,7 @@ export type { AgentMarketplace } from "./contracts/AgentMarketplace";
 export { AgentMarketplace__factory } from "./factories/contracts/AgentMarketplace__factory";
 export type { MONToken } from "./contracts/MONToken";
 export { MONToken__factory } from "./factories/contracts/MONToken__factory";
+export type { WorldBoss } from "./contracts/WorldBoss";
+export { WorldBoss__factory } from "./factories/contracts/WorldBoss__factory";
 export type { WorldTreasury } from "./contracts/WorldTreasury";
 export { WorldTreasury__factory } from "./factories/contracts/WorldTreasury__factory";

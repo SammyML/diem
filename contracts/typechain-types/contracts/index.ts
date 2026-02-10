@@ -3,4 +3,5 @@
 /* eslint-disable */
 export type { AgentMarketplace } from "./AgentMarketplace";
 export type { MONToken } from "./MONToken";
+export type { WorldBoss } from "./WorldBoss";
 export type { WorldTreasury } from "./WorldTreasury";

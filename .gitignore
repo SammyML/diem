@@ -7,6 +7,12 @@ yarn.lock
 dist/
 build/
 
+# Hardhat build artifacts
+contracts/artifacts/
+contracts/cache/
+contracts/typechain-types/
+
+
 # World state data
 data/
 *.json.backup

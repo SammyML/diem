@@ -58,6 +58,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MONToken__factory>;
     getContractFactory(
+      name: "WorldBoss",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.WorldBoss__factory>;
+    getContractFactory(
       name: "WorldTreasury",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.WorldTreasury__factory>;
@@ -118,6 +122,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.MONToken>;
     getContractAt(
+      name: "WorldBoss",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.WorldBoss>;
+    getContractAt(
       name: "WorldTreasury",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -168,6 +177,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MONToken>;
     deployContract(
+      name: "WorldBoss",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.WorldBoss>;
+    deployContract(
       name: "WorldTreasury",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.WorldTreasury>;
@@ -227,6 +240,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MONToken>;
+    deployContract(
+      name: "WorldBoss",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.WorldBoss>;
     deployContract(
       name: "WorldTreasury",
       args: any[],
