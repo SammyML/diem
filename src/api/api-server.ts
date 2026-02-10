@@ -66,7 +66,17 @@ export class ApiServer {
         // Get all locations
         this.app.get('/world/locations', (req, res) => {
             const state = this.worldState.getState();
-            res.json(Array.from(state.locations.values()));
+            const locations = Array.from(state.locations.values()).map(loc => {
+                // Count agents at this location
+                const agentCount = Array.from(state.agents.values())
+                    .filter(agent => agent.locationId === loc.id).length;
+
+                return {
+                    ...loc,
+                    agentCount
+                };
+            });
+            res.json(locations);
         });
 
         // Get specific location
