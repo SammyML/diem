@@ -462,6 +462,11 @@ The `launch-simulation.ts` script creates 3 distinct agent types:
 - Actions: Monitor market  List items  Move to Workshop  Craft tools  Rest
 - Behavior: Opportunistic trading and production
 
+**SimGladiator** (ArenaAgent)
+- Strategy: Combat dominance and wagering
+- Actions: Monitor Arena  Create/Accept Challenges  Fight
+- Behavior: Seeks highest value targets, aggressive playstyle
+
 ---
 
 ##  Performance & Metrics
@@ -653,7 +658,7 @@ See [docs/MONAD_INTEGRATION.md](docs/MONAD_INTEGRATION.md) for blockchain integr
 - E2E tests for complete user flows
 - Gas benchmarking and optimization
 
-### Phase 4: Agent Intelligence
+### Phase 4: Agent Intelligence (Next)
 - Advanced decision-making framework
 - Market analysis and prediction
 - Learning capabilities (reinforcement learning)
