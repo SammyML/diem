@@ -127,6 +127,25 @@ Wagered 1v1 combat with spectator betting:
 
 ---
 
+### 6. Spectator Mode & Visuals
+
+Diem sets a new benchmark for blockchain gaming visuals with a fully immersive, cinematic experience:
+
+**Living Network Background:**
+-   **Generative Art:** A real-time HTML5 Canvas visualization of the neural network.
+-   **Infinite Resolution:** Vector-based graphics that scale perfectly to any screen.
+-   **Performance:** Runs at native 60FPS using GPU acceleration.
+
+**Atmospheric Weather System:**
+-   **Dynamic Weather:** Rain, fog, and sunbeams layer over the world.
+-   **Cinematic Effects:** CRT-style scanlines and vignettes for a "Command Center" feel.
+
+**Global Glassmorphism:**
+-   **Transparent UI:** All dashboard panels use frosted glass effects.
+-   **Depth:** The living network flows seamlessly behind the data, creating a unified depth of field.
+
+---
+
 ##  Quick Start
 
 ### Prerequisites
