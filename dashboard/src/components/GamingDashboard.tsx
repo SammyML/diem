@@ -96,6 +96,20 @@ export const GamingDashboard: React.FC = () => {
             const bossData = await bossRes.json();
             setBoss(bossData.boss);
 
+            // Update stats from world data
+            if (worldData) {
+                const agentCount = Object.keys(worldData.agents || {}).length;
+                const eco = worldData.economicStats || {};
+
+                setStats({
+                    totalAgents: agentCount,
+                    resourcesGathered: eco.totalResourcesGathered || 0,
+                    itemsCrafted: eco.totalItemsCrafted || 0,
+                    tradesCompleted: eco.totalTrades || 0,
+                    totalMonInCirculation: eco.totalMonInCirculation || 0
+                });
+            }
+
         } catch (error) {
             console.error('Failed to fetch dashboard data:', error);
         }

@@ -257,7 +257,7 @@ body {
 /* Video-Style Overlays */
 .dashboard-overlays-top-left {
     position: absolute;
-    top: 40px;
+    top: 220px;
     left: 40px;
     display: flex;
     gap: 40px;
@@ -455,10 +455,11 @@ body {
 /* Boss Overlay */
 .boss-overlay {
     position: absolute;
-    bottom: 100px;
-    top: auto;
-    left: 40px;
-    transform: none;
+    top: 15%;
+    /* Matches Arena Y position (15%) */
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: auto;
     width: 400px;
     max-width: 90%;
     z-index: 1000;
