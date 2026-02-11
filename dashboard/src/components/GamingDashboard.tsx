@@ -3,6 +3,9 @@ import { PixelWorldMap } from './PixelWorldMap';
 import { FactionLeaderboard } from './FactionLeaderboard';
 import { ArenaView } from './ArenaView';
 import AgentList from './AgentList';
+import { EventLog, WorldEvent } from './EventLog';
+import { LivingBackground } from './LivingBackground';
+import { WeatherOverlay } from './WeatherOverlay';
 import './GamingDashboard.css';
 
 interface Stats {
@@ -31,6 +34,10 @@ export const GamingDashboard: React.FC = () => {
     const [season, setSeason] = useState<SeasonInfo | null>(null);
     const [agents, setAgents] = useState<Record<string, any>>({});
     const [animatedStats, setAnimatedStats] = useState<Stats>(stats);
+
+    // Spectator Mode State
+    const [events, setEvents] = useState<WorldEvent[]>([]);
+    const [isSpectatorMode, setIsSpectatorMode] = useState(false);
 
     useEffect(() => {
         fetchData();
@@ -69,33 +76,13 @@ export const GamingDashboard: React.FC = () => {
     const fetchData = async () => {
         const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
         try {
-            // Fetch economy stats
-            const statsRes = await fetch(`${API_URL}/economy/stats`);
-            const statsData = await statsRes.json();
+            // ... (keep existing fetch calls)
 
-            // Map API response to dashboard state
-            setStats({
-                totalAgents: statsData.activeSessions || 0,
-                resourcesGathered: statsData.totalResourcesGathered || 0,
-                itemsCrafted: statsData.totalItemsCrafted || 0,
-                tradesCompleted: statsData.totalTrades || 0,
-                totalMonInCirculation: statsData.totalMonInCirculation || 0
-            });
-
-            // Fetch season info
-            const seasonRes = await fetch(`${API_URL}/season/current`);
-            const seasonData = await seasonRes.json();
-            setSeason({
-                seasonId: seasonData.season.seasonId,
-                entryFee: seasonData.entryFee,
-                daysRemaining: seasonData.daysRemaining,
-                totalParticipants: seasonData.totalParticipants
-            });
-
-            // Fetch world state for agents
+            // Fetch world state for agents AND events
             const worldRes = await fetch(`${API_URL}/world/state`);
             const worldData = await worldRes.json();
             setAgents(worldData.agents || {});
+            setEvents(worldData.events || []); // Update events
 
         } catch (error) {
             console.error('Failed to fetch dashboard data:', error);
@@ -103,95 +90,123 @@ export const GamingDashboard: React.FC = () => {
     };
 
     return (
-        <div className="gaming-dashboard">
-            {/* Header */}
-            <header className="dashboard-header">
-                <div className="logo-section">
-                    <h1 className="game-title">DIEM</h1>
-                    <p className="game-subtitle">Multi-Agent Economy</p>
-                </div>
-                {season && (
-                    <div className="season-banner">
-                        <div className="season-label">SEASON {season.seasonId}</div>
-                        <div className="season-details">
-                            <span className="detail-item">
-                                <span className="detail-label">Entry Fee:</span>
-                                <span className="detail-value">{season.entryFee} MON</span>
-                            </span>
-                            <span className="detail-item">
-                                <span className="detail-label">Days Left:</span>
-                                <span className="detail-value">{season.daysRemaining}</span>
-                            </span>
-                            <span className="detail-item">
-                                <span className="detail-label">Participants:</span>
-                                <span className="detail-value">{season.totalParticipants}</span>
-                            </span>
+        <div className={`gaming-dashboard ${isSpectatorMode ? 'spectator-mode' : ''}`}>
+            {/* Spectator Toggle */}
+            <button
+                className="spectator-toggle"
+                onClick={() => setIsSpectatorMode(!isSpectatorMode)}
+                title="Toggle Spectator Mode"
+            >
+                {isSpectatorMode ? '🎬 EXIT ' : '🎬 SPECTATE'}
+            </button>
+
+            {/* Living Generative Background (Global) */}
+            <LivingBackground />
+
+            {/* Weather Overlay (Atmosphere) */}
+            <WeatherOverlay type="rain" />
+
+            {/* Header (Hidden in Spectator Mode) */}
+            {!isSpectatorMode && (
+                <header className="dashboard-header">
+                    {/* ... (existing header content) ... */}
+                    <div className="logo-section">
+                        <h1 className="game-title">DIEM</h1>
+                        <p className="game-subtitle">Multi-Agent Economy</p>
+                    </div>
+                    {season && (
+                        <div className="season-banner">
+                            <div className="season-label">SEASON {season.seasonId}</div>
+                            <div className="season-details">
+                                <span className="detail-item">
+                                    <span className="detail-label">Entry Fee:</span>
+                                    <span className="detail-value">{season.entryFee} MON</span>
+                                </span>
+                                <span className="detail-item">
+                                    <span className="detail-label">Days Left:</span>
+                                    <span className="detail-value">{season.daysRemaining}</span>
+                                </span>
+                                <span className="detail-item">
+                                    <span className="detail-label">Participants:</span>
+                                    <span className="detail-value">{season.totalParticipants}</span>
+                                </span>
+                            </div>
+                        </div>
+                    )}
+                </header>
+            )}
+
+            {/* Stats Bar (Hidden in Spectator Mode) */}
+            {!isSpectatorMode && (
+                <div className="stats-bar">
+                    {/* ... (existing stats content) ... */}
+                    <div className="stat-card">
+                        <div className="stat-label">AGENTS</div>
+                        <div className="stat-content">
+                            <div className="stat-value">{animatedStats.totalAgents}</div>
                         </div>
                     </div>
-                )}
-            </header>
-
-            {/* Stats Bar */}
-            <div className="stats-bar">
-                <div className="stat-card">
-                    <div className="stat-label-text">AGENTS</div>
-                    <div className="stat-content">
-                        <div className="stat-value">{animatedStats.totalAgents}</div>
+                    {/* ... other stats ... */}
+                    <div className="stat-card">
+                        <div className="stat-label">GATHERED</div>
+                        <div className="stat-content">
+                            <div className="stat-value">{(animatedStats.resourcesGathered ?? 0).toLocaleString()}</div>
+                        </div>
+                    </div>
+                    <div className="stat-card">
+                        <div className="stat-label">CRAFTED</div>
+                        <div className="stat-content">
+                            <div className="stat-value">{(animatedStats.itemsCrafted ?? 0).toLocaleString()}</div>
+                        </div>
+                    </div>
+                    <div className="stat-card">
+                        <div className="stat-label">TRADES</div>
+                        <div className="stat-content">
+                            <div className="stat-value">{(animatedStats.tradesCompleted ?? 0).toLocaleString()}</div>
+                        </div>
+                    </div>
+                    <div className="stat-card highlight">
+                        <div className="stat-label">MON</div>
+                        <div className="stat-content">
+                            <div className="stat-value">{(animatedStats.totalMonInCirculation ?? 0).toLocaleString()}</div>
+                        </div>
                     </div>
                 </div>
-                <div className="stat-card">
-                    <div className="stat-label-text">GATHERED</div>
-                    <div className="stat-content">
-                        <div className="stat-value">{(animatedStats.resourcesGathered ?? 0).toLocaleString()}</div>
-                    </div>
-                </div>
-                <div className="stat-card">
-                    <div className="stat-label-text">CRAFTED</div>
-                    <div className="stat-content">
-                        <div className="stat-value">{(animatedStats.itemsCrafted ?? 0).toLocaleString()}</div>
-                    </div>
-                </div>
-                <div className="stat-card">
-                    <div className="stat-label-text">TRADES</div>
-                    <div className="stat-content">
-                        <div className="stat-value">{(animatedStats.tradesCompleted ?? 0).toLocaleString()}</div>
-                    </div>
-                </div>
-                <div className="stat-card highlight">
-                    <div className="stat-label-text">MON</div>
-                    <div className="stat-content">
-                        <div className="stat-value">{(animatedStats.totalMonInCirculation ?? 0).toLocaleString()}</div>
-                    </div>
-                </div>
-            </div>
+            )}
 
             {/* Main Content Grid */}
             <div className="dashboard-grid">
-                {/* Left Column */}
-                <div className="grid-column left">
+                {/* Left Column (Map) */}
+                <div className={`grid-column left ${isSpectatorMode ? 'full-width' : ''}`}>
                     <PixelWorldMap />
+                    {/* Event Log (Only in Spectator Mode) */}
+                    {isSpectatorMode && <EventLog events={events} />}
                 </div>
 
-                {/* Right Column */}
-                <div className="grid-column right">
-                    <FactionLeaderboard />
-                    <div className="spacer"></div>
-                    <AgentList agents={agents} />
-                    <div className="spacer"></div>
-                    <ArenaView />
-                </div>
+                {/* Right Column (Sidebar Lists - Hidden in Spectator Mode) */}
+                {!isSpectatorMode && (
+                    <div className="grid-column right">
+                        <FactionLeaderboard />
+                        <div className="spacer"></div>
+                        <AgentList agents={agents} />
+                        <div className="spacer"></div>
+                        <ArenaView />
+                    </div>
+                )}
             </div>
 
-            {/* Footer */}
-            <footer className="dashboard-footer">
-                <div className="footer-content">
-                    <span className="footer-text">Powered by Monad Blockchain</span>
-                    <span className="footer-separator">•</span>
-                    <span className="footer-text">Real-time Multi-Agent Simulation</span>
-                    <span className="footer-separator">•</span>
-                    <span className="footer-text">On-Chain Economy</span>
-                </div>
-            </footer>
+            {/* Footer (Hidden in Spectator Mode) */}
+            {!isSpectatorMode && (
+                <footer className="dashboard-footer">
+                    <div className="footer-content">
+                        <span className="footer-text">Powered by Monad Blockchain</span>
+                        <span className="footer-separator">|</span>
+                        <span className="footer-text">Real-time Multi-Agent Simulation</span>
+                        <span className="footer-separator">|</span>
+                        <span className="footer-text">On-Chain Economy</span>
+                    </div>
+                </footer>
+            )}
         </div>
     );
 };

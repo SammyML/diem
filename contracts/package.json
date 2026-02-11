@@ -5,8 +5,8 @@
     "scripts": {
         "compile": "hardhat compile",
         "test": "hardhat test",
-        "deploy:testnet": "hardhat run scripts/deploy.ts --network monad-testnet",
-        "verify": "hardhat verify --network monad-testnet"
+        "deploy:mainnet": "hardhat run scripts/deploy.ts --network monad-mainnet",
+        "verify": "hardhat verify --network monad-mainnet"
     },
     "devDependencies": {
         "@nomicfoundation/hardhat-toolbox": "^4.0.0",

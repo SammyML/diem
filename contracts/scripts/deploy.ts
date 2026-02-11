@@ -27,7 +27,7 @@ async function main() {
         console.error("\n ERROR: Deployer wallet has 0 MON!");
         console.error("You need testnet MON to deploy contracts.");
         console.error("\nPlease:");
-        console.error("1. Add Monad Testnet to MetaMask (Chain ID: 10143)");
+        console.error("1. Add Monad Mainnet to MetaMask (Chain ID: 143)");
         console.error("2. Get testnet MON from a faucet:");
         console.error("   - Chainstack: https://chainstack.com/faucet/monad");
         console.error("   - Check TESTNET_SETUP.md for more options");

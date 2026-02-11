@@ -1,0 +1,88 @@
+.weather-overlay-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    /* Let clicks pass through to UI */
+    z-index: 0;
+    /* Same as background, but DOM order places it on top */
+    overflow: hidden;
+}
+
+/* Cinematic Scanlines */
+.scanlines {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom,
+            rgba(255, 255, 255, 0),
+            rgba(255, 255, 255, 0) 50%,
+            rgba(0, 0, 0, 0.1) 50%,
+            rgba(0, 0, 0, 0.1));
+    background-size: 100% 4px;
+    z-index: 2;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.6;
+}
+
+/* Vignette */
+.vignette {
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, transparent 50%, rgba(0, 0, 0, 0.6) 100%);
+    z-index: 3;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Rain Effect */
+.rain-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.rain-drop {
+    position: absolute;
+    top: -20px;
+    width: 1px;
+    height: 40px;
+    background: rgba(127, 219, 202, 0.4);
+    /* Cyberpunk Blue */
+    animation: rain linear infinite;
+}
+
+@keyframes rain {
+    to {
+        transform: translateY(105vh);
+    }
+}
+
+/* Sunbeams / Glow */
+.sunbeams {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 0%, rgba(127, 219, 202, 0.1), transparent 60%);
+    z-index: 1;
+    animation: pulseGlow 5s ease-in-out infinite alternate;
+}
+
+@keyframes pulseGlow {
+    from {
+        opacity: 0.3;
+    }
+
+    to {
+        opacity: 0.6;
+    }
+}

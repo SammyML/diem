@@ -18,7 +18,7 @@
     "test": "jest",
     "test:integration": "jest --testPathPattern=integration",
     "contracts:compile": "cd contracts && npx hardhat compile",
-    "contracts:deploy": "cd contracts && npx hardhat run scripts/deploy.ts --network monad-testnet"
+    "contracts:deploy": "cd contracts && npx hardhat run scripts/deploy.ts --network monad-mainnet"
   },
   "keywords": [
     "virtual-world",

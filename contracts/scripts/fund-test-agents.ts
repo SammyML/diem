@@ -23,56 +23,53 @@ async function main() {
         process.exit(1);
     }
 
-    // Test agent addresses (you can customize these)
-    const testAgents = [
-        // Add your test agent addresses here
-        // Example: "0x1234567890123456789012345678901234567890",
-    ];
-
-    // If no agents specified, create some
-    if (testAgents.length === 0) {
-        console.log(" No test agents specified. Generating 3 test wallets...\n");
-
-        for (let i = 1; i <= 3; i++) {
-            const wallet = ethers.Wallet.createRandom();
-            testAgents.push(wallet.address);
-            console.log(`Agent ${i}:`);
-            console.log(`   Address: ${wallet.address}`);
-            console.log(`   Private Key: ${wallet.privateKey}`);
-            console.log(`     SAVE THIS PRIVATE KEY SECURELY!\n`);
-        }
-
-        console.log(" Add these addresses to .env.testnet for future use\n");
+    // Test agent addresses (from .env)
+    const testAgentKey = process.env.AGENT1_PRIVATE_KEY;
+    if (!testAgentKey) {
+        console.error(" AGENT1_PRIVATE_KEY not found in .env");
+        process.exit(1);
     }
+    const testAgentWallet = new ethers.Wallet(testAgentKey, ethers.provider);
+    const testAgents = [testAgentWallet.address];
 
-    console.log(`Funding ${testAgents.length} test agents...\n`);
+    console.log(`Funding test agent: ${testAgents[0]}...\n`);
 
     for (let i = 0; i < testAgents.length; i++) {
         const agent = testAgents[i];
-        console.log(`Agent ${i + 1}: ${agent}`);
 
         try {
-            // 1. Send native MON for gas
-            console.log(`   1⃣  Sending 0.5 MON (gas)...`);
-            const gasTx = await deployer.sendTransaction({
-                to: agent,
-                value: ethers.parseEther("0.5")
-            });
-            await gasTx.wait();
-            console.log(`    Gas sent (tx: ${gasTx.hash.slice(0, 10)}...)`);
+            // 1. Send native MON for gas (Minimal amount for mainnet safety)
+            const gasAmount = "0.05";
+            console.log(`   [1] Sending ${gasAmount} MON (gas)...`);
+
+            const currentBalance = await ethers.provider.getBalance(agent);
+            if (currentBalance < ethers.parseEther(gasAmount)) {
+                const gasTx = await deployer.sendTransaction({
+                    to: agent,
+                    value: ethers.parseEther(gasAmount)
+                });
+                await gasTx.wait();
+                console.log(`    Gas sent (tx: ${gasTx.hash.slice(0, 10)}...)`);
+            } else {
+                console.log(`    Agent already has sufficient gas (${ethers.formatEther(currentBalance)} MON)`);
+            }
 
             // 2. Fund with MON tokens
             console.log(`   2⃣  Funding with 200 MON tokens...`);
-            const fundTx = await monToken.fundAgent(agent);
-            const fundReceipt = await fundTx.wait();
-            console.log(`    Tokens sent (tx: ${fundTx.hash.slice(0, 10)}...)`);
-            console.log(`    Gas used: ${fundReceipt.gasUsed}`);
+            const tokenBalance = await monToken.balanceOf(agent);
+            if (tokenBalance < ethers.parseEther("200")) {
+                const fundTx = await monToken.fundAgent(agent);
+                await fundTx.wait();
+                console.log(`    Tokens sent (tx: ${fundTx.hash.slice(0, 10)}...)`);
+            } else {
+                console.log(`    Agent already has sufficient tokens (${ethers.formatEther(tokenBalance)} MON)`);
+            }
 
             // 3. Verify balances
-            const nativeBalance = await ethers.provider.getBalance(agent);
-            const tokenBalance = await monToken.balanceOf(agent);
-            console.log(`    Native MON: ${ethers.formatEther(nativeBalance)}`);
-            console.log(`    MON Tokens: ${ethers.formatEther(tokenBalance)}`);
+            const finalNative = await ethers.provider.getBalance(agent);
+            const finalToken = await monToken.balanceOf(agent);
+            console.log(`    Native MON: ${ethers.formatEther(finalNative)}`);
+            console.log(`    MON Tokens: ${ethers.formatEther(finalToken)}`);
             console.log();
 
         } catch (error: any) {
@@ -80,11 +77,9 @@ async function main() {
         }
     }
 
-    console.log(" Test agents funded successfully!");
+    console.log(" Test agent funded successfully!");
     console.log("\n Next Steps:");
-    console.log("   1. Import agent private keys into MetaMask");
-    console.log("   2. Add MON token to MetaMask (address: " + addresses.contracts.MONToken + ")");
-    console.log("   3. Run entry test: npx hardhat run scripts/test-entry.ts --network monad-testnet");
+    console.log("   1. Run entry test: npx hardhat run scripts/test-entry.ts --network monad-mainnet");
 }
 
 main()

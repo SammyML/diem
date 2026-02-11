@@ -16,9 +16,9 @@ const config: HardhatUserConfig = {
         }
     },
     networks: {
-        "monad-testnet": {
-            url: "https://testnet-rpc.monad.xyz",
-            chainId: 10143,
+        "monad-mainnet": {
+            url: "https://rpc.monad.xyz",
+            chainId: 143,
             accounts: process.env.DEPLOYER_PRIVATE_KEY ?
                 (process.env.AGENT1_PRIVATE_KEY ?
                     [process.env.DEPLOYER_PRIVATE_KEY, process.env.AGENT1_PRIVATE_KEY] :
@@ -26,28 +26,23 @@ const config: HardhatUserConfig = {
                 [],
             // gasPrice: 1000000000, // Let provider estimate gas
         },
-        "monad-testnet-alt": {
-            url: "https://rpc-testnet.monadinfra.com",
-            chainId: 10143,
-            accounts: process.env.DEPLOYER_PRIVATE_KEY ? [process.env.DEPLOYER_PRIVATE_KEY] : [],
-        },
-        "monad-mainnet": {
-            url: "https://rpc.monad.xyz",
+        "monad-mainnet-alt": {
+            url: "https://rpc-mainnet.monadinfra.com",
             chainId: 143,
             accounts: process.env.DEPLOYER_PRIVATE_KEY ? [process.env.DEPLOYER_PRIVATE_KEY] : [],
         }
     },
     etherscan: {
         apiKey: {
-            "monad-testnet": "no-api-key-needed"
+            "monad-mainnet": "no-api-key-needed"
         },
         customChains: [
             {
-                network: "monad-testnet",
-                chainId: 10143,
+                network: "monad-mainnet",
+                chainId: 143,
                 urls: {
-                    apiURL: "https://testnet.monad.xyz/api",
-                    browserURL: "https://testnet.monad.xyz"
+                    apiURL: "https://monadvision.com/api",
+                    browserURL: "https://monadvision.com"
                 }
             }
         ]

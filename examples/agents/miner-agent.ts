@@ -9,7 +9,7 @@ interface Agent {
 
 async function runMinerAgent() {
     const agentName = `Miner_${Math.floor(Math.random() * 1000)}`;
-    console.log(`\n⛏️  ${agentName} starting up...`);
+    console.log(`\n ${agentName} starting up...`);
 
     try {
         const url = `${API_URL}/agent/enter`;
@@ -28,32 +28,46 @@ async function runMinerAgent() {
         // Main loop
         setInterval(async () => {
             try {
+                let atMiningCaves = false;
+
                 // 1. Move to mining caves if not there
                 try {
-                    await axios.post(`${API_URL}/agent/action`, {
+                    const moveRes = await axios.post(`${API_URL}/agent/action`, {
                         sessionToken,
                         action: {
                             type: 'move',
                             targetLocationId: 'mining_caves'
                         }
                     });
-                } catch (e) {
-                    // Ignore if already there or fail
+                    if (moveRes.data.success) {
+                        atMiningCaves = true;
+                    } else if (moveRes.data.message.includes('Already at')) {
+                        atMiningCaves = true;
+                    }
+                } catch (e: any) {
+                    // Ignore move errors, but don't set flag
                 }
 
-                // 2. Gather ore
-                const response = await axios.post(`${API_URL}/agent/action`, {
-                    sessionToken,
-                    action: {
-                        type: 'gather',
-                        targetResourceType: 'ore'
-                    }
-                });
+                if (atMiningCaves) {
+                    // 2. Gather ore
+                    const response = await axios.post(`${API_URL}/agent/action`, {
+                        sessionToken,
+                        action: {
+                            type: 'gather',
+                            targetResourceType: 'ore'
+                        }
+                    });
 
-                if (response.data.success) {
-                    console.log(`gathered resources: ${response.data.message}`);
+                    if (response.data && response.data.success) {
+                        console.log(`gathered resources: ${response.data.message}`);
+                    } else {
+                        const msg = response.data?.message || 'Unknown error';
+                        // Only log if it's not a generic "cooldown" spam, or maybe just silence failures to look cleaner?
+                        // "World Class" logs are informative.
+                        console.log(`mining status: ${msg}`);
+                    }
                 } else {
-                    console.log(`mining failed: ${response.data.message}`);
+                    // console.log('Moving to caves...');
                 }
 
             } catch (error: any) {
@@ -68,8 +82,17 @@ async function runMinerAgent() {
         }, 3000);
 
     } catch (error: any) {
-        console.error(`❌ failed to start:`, error.response?.data || error.message);
+        console.error(` failed to start:`, error.response?.data || error.message);
     }
 }
+
+
+// Prevent crash on unhandled errors
+process.on('uncaughtException', (err) => {
+    console.error('UNCAUGHT EXCEPTION:', err);
+});
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('UNHANDLED REJECTION:', reason);
+});
 
 runMinerAgent();

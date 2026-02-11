@@ -30,9 +30,9 @@ async function main() {
     const actionProcessor = new ActionProcessor(worldState, tokenLedger);
 
     // Initialize Blockchain Service
-    console.log('Connecting to Monad Testnet...');
+    console.log('Connecting to Monad Mainnet...');
     const blockchainParams = {
-        rpcUrl: process.env.MONAD_RPC_URL || 'https://testnet-rpc.monad.xyz',
+        rpcUrl: process.env.MONAD_RPC_URL || 'https://rpc.monad.xyz',
         privateKey: process.env.DEPLOYER_PRIVATE_KEY
     };
 
@@ -43,7 +43,7 @@ async function main() {
 
     try {
         await blockchainService.loadContracts();
-        console.log('Connected to Monad Blockchain');
+        console.log('Connected to Monad Mainnet');
 
         // Listen to Blockchain Events and Sync World State
         console.log('Starting event polling...');
@@ -88,7 +88,7 @@ async function main() {
                         agentId: agentId,
                         locationId: 'market_square',
                         timestamp: Date.now(),
-                        description: `Agent ${agentAddress.slice(0, 8)} entered via Monad Blockchain`,
+                        description: `Agent ${agentAddress.slice(0, 8)} entered via Monad Mainnet`,
                         data: { monChange: -100 }
                     });
                 }

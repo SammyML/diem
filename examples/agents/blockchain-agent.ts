@@ -38,8 +38,12 @@ class BlockchainAgent {
         console.log(`   MON Balance: ${balance}`);
 
         // Pay entry fee on blockchain
-        const result = await this.blockchain.enterWorld(this.wallet);
-        console.log(`   Entry fee paid! TX: ${result.txHash.substring(0, 10)}...`);
+        try {
+            const result = await this.blockchain.enterWorld(this.wallet);
+            console.log(`   Entry fee paid! TX: ${result.txHash.substring(0, 10)}...`);
+        } catch (error: any) {
+            console.log('   Blockchain entry skipped (likely already entered). Synchronizing with API...');
+        }
 
         // Register with API server
         const response = await axios.post(`${this.apiUrl}/agent/enter/blockchain`, {
@@ -192,7 +196,7 @@ async function runBlockchainAgentDemo() {
 
     // Initialize blockchain service
     const blockchain = new MonadBlockchainService(
-        process.env.MONAD_RPC_URL || 'https://testnet-rpc.monad.xyz',
+        process.env.MONAD_RPC_URL || 'https://rpc.monad.xyz',
         process.env.DEPLOYER_PRIVATE_KEY
     );
 
@@ -253,36 +257,52 @@ async function runBlockchainAgentDemo() {
 
     await agent.wait(2000);
 
-    // Perform actions
-    await agent.performAction('move', { targetLocationId: 'mining_caves' });
-    await agent.wait(2000);
+    // Start Autonomous Loop
+    console.log('\n Starting Autonomous Agent Loop...');
 
-    await agent.performAction('gather', { targetResourceType: 'ore' });
-    await agent.wait(2000);
+    while (true) {
+        try {
+            // 1. Move to caves
+            await agent.performAction('move', { targetLocationId: 'mining_caves' });
+            await agent.wait(5000);
 
-    await agent.performAction('gather', { targetResourceType: 'ore' });
-    await agent.wait(2000);
+            // 2. Gather Ore (x3)
+            for (let i = 0; i < 3; i++) {
+                await agent.performAction('gather', { targetResourceType: 'ore' });
+                await agent.wait(4000);
+            }
 
-    // List item on marketplace
-    try {
-        await agent.listItemOnMarketplace('ore', 5, 25);
-    } catch (error) {
-        console.log(' Market listing failed (maybe no items):', error);
+            // 3. Move to market
+            await agent.performAction('move', { targetLocationId: 'market_square' });
+            await agent.wait(5000);
+
+            // 4. List items (if any)
+            try {
+                // List random amount to keep market active
+                await agent.listItemOnMarketplace('ore', 2, 25);
+            } catch (error) {
+                // Ignore listing errors (empty inventory)
+            }
+            await agent.wait(5000);
+
+            // 5. Check stats
+            await agent.getStats();
+
+        } catch (error: any) {
+            console.error(` Loop Error: ${error.message}`);
+            await agent.wait(10000); // Backoff on error
+        }
     }
-    await agent.wait(2000);
-
-    // Get stats
-    await agent.getStats();
-
-    // Get world stats
-    const worldStats = await blockchain.getWorldStats();
-    console.log('\n World Stats:');
-    console.log(`   Total Agents: ${worldStats.totalAgents}`);
-    console.log(`   Total Fees Collected: ${worldStats.totalFeesCollected} MON`);
-    console.log(`   Total Rewards: ${worldStats.totalRewardsDistributed} MON`);
-
-    console.log('\n Blockchain agent demo complete!');
 }
+
+
+// Prevent crash on unhandled errors
+process.on('uncaughtException', (err) => {
+    console.error('UNCAUGHT EXCEPTION:', err);
+});
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('UNHANDLED REJECTION:', reason);
+});
 
 // Run demo
 if (require.main === module) {

@@ -1,11 +1,11 @@
 import { ethers } from "hardhat";
 
 /**
- * Verifies deployed contracts on Monad testnet
+ * Verifies deployed contracts on Monad Mainnet
  * Checks contract state, configuration, and basic functionality
  */
 async function main() {
-    console.log(" Verifying Diem Deployment on Monad Testnet\n");
+    console.log(" Verifying Diem Deployment on Monad Mainnet\n");
 
     // Load deployment addresses
     let addresses;
@@ -146,8 +146,8 @@ async function main() {
         console.log(" ALL VERIFICATIONS PASSED!");
         console.log("\n Next Steps:");
         console.log("   1. Update .env with contract addresses");
-        console.log("   2. Fund test agents: npx hardhat run scripts/fund-test-agents.ts --network monad-testnet");
-        console.log("   3. Run integration tests: npx hardhat run scripts/test-entry.ts --network monad-testnet");
+        console.log("   2. Fund test agents: npx hardhat run scripts/fund-test-agents.ts --network monad-mainnet");
+        console.log("   3. Run integration tests: npx hardhat run scripts/test-entry.ts --network monad-mainnet");
         console.log("   4. Start blockchain server: npm run start:blockchain");
     } else {
         console.log(" SOME VERIFICATIONS FAILED!");

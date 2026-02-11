@@ -57,6 +57,8 @@ export class ApiServer {
             res.json({
                 locations: Array.from(state.locations.values()),
                 agentCount: state.agents.size,
+                agents: Object.fromEntries(state.agents),
+                events: this.worldState.getRecentEvents(50), // Send last 50 events for spectator mode
                 economicStats: state.economicStats,
                 startTime: state.startTime,
                 lastUpdate: state.lastUpdate

@@ -4,7 +4,7 @@
 
 [![Solidity](https://img.shields.io/badge/Solidity-0.8.20-blue)](https://soliditylang.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
-[![Monad](https://img.shields.io/badge/Monad-Testnet-green)](https://monad.xyz/)
+[![Monad](https://img.shields.io/badge/Monad-Mainnet-green)](https://monad.xyz/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## Overview
@@ -133,7 +133,7 @@ Wagered 1v1 combat with spectator betting:
 
 - **Node.js** 16+ and npm
 - **MetaMask** wallet
-- **Monad testnet MON tokens** - Get from [Monad Faucet](https://testnet.monad.xyz/faucet)
+- **Monad mainnet MON tokens** - Acquire from exchanges or bridge from other chains
 
 ### Installation
 
@@ -162,11 +162,11 @@ cp .env.example .env
 2. Edit `.env` with your configuration:
 
 ```env
-# Monad Testnet Configuration
-MONAD_RPC_URL=https://testnet-rpc.monad.xyz
-MONAD_CHAIN_ID=10143
+# Monad Mainnet Configuration
+MONAD_RPC_URL=https://rpc.monad.xyz
+MONAD_CHAIN_ID=143
 
-# Your Deployer Wallet (must have testnet MON)
+# Your Deployer Wallet (must have mainnet MON)
 DEPLOYER_PRIVATE_KEY=0xYOUR_PRIVATE_KEY_HERE
 
 # Contract Addresses (auto-filled after deployment)
@@ -187,11 +187,11 @@ cd contracts
 # Compile contracts
 npx hardhat compile
 
-# Deploy to Monad Testnet
-npx hardhat run scripts/deploy.ts --network monad-testnet
+# Deploy to Monad Mainnet
+npx hardhat run scripts/deploy.ts --network monad-mainnet
 
 # Verify deployment
-npx hardhat run scripts/verify-deployment.ts --network monad-testnet
+npx hardhat run scripts/verify-deployment.ts --network monad-mainnet
 ```
 
 **Important:** After deployment, the contract addresses will be saved to `contracts/deployment-addresses.json` and automatically loaded by the system.
@@ -471,7 +471,7 @@ The `launch-simulation.ts` script creates 3 distinct agent types:
 
 ##  Performance & Metrics
 
-### Gas Costs (Monad Testnet)
+### Gas Costs (Monad Mainnet)
 
 | Operation | Gas Used | Cost (at 1 gwei) |
 |-----------|----------|------------------|
@@ -485,7 +485,7 @@ The `launch-simulation.ts` script creates 3 distinct agent types:
 
 ### System Performance
 
-- **Confirmation Time:** 5-15 seconds average on Monad Testnet
+- **Confirmation Time:** 5-15 seconds average on Monad Mainnet
 - **Dashboard Update Latency:** < 2 seconds via WebSocket
 - **Agent Action Frequency:** 4-6 actions/minute per agent
 - **Concurrent Agents Tested:** Up to 100 agents simultaneously
@@ -536,7 +536,7 @@ npm run dev                 # Development mode with hot reload
 cd contracts
 npx hardhat compile        # Compile Solidity contracts
 npx hardhat test          # Run contract tests
-npx hardhat run scripts/deploy.ts --network monad-testnet
+npx hardhat run scripts/deploy.ts --network monad-mainnet
 ```
 
 **Dashboard:**
@@ -570,10 +570,10 @@ The backend server didn't shut down cleanly.
 
 **Error: `insufficient funds for gas`**
 
-The deployer wallet needs testnet MON tokens.
+The deployer wallet needs mainnet MON tokens.
 
 **Solution:**
-1. Get MON from the [Monad Faucet](https://testnet.monad.xyz/faucet)
+1. Acquire MON from exchanges or bridge from other chains
 2. Ensure the wallet in `.env` (`DEPLOYER_PRIVATE_KEY`) has at least 1-2 MON
 3. Check balance: The simulation script will log deployer balance on startup
 

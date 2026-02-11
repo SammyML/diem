@@ -1,11 +1,11 @@
 import { ethers } from "hardhat";
 
 /**
- * Tests the complete agent entry flow on Monad testnet
+ * Tests the complete agent entry flow on Monad Mainnet
  * Includes approval, entry, and stats verification
  */
 async function main() {
-    console.log(" Testing Agent Entry Flow on Monad Testnet\n");
+    console.log(" Testing Agent Entry Flow on Monad Mainnet\n");
 
     // Load deployment addresses
     const addresses = require("../deployment-addresses.json");
@@ -19,7 +19,7 @@ async function main() {
         console.error(" No test agent wallet found!");
         console.error("   Either:");
         console.error("   1. Add AGENT1_PRIVATE_KEY to .env");
-        console.error("   2. Or run: npx hardhat run scripts/fund-test-agents.ts --network monad-testnet");
+        console.error("   2. Or run: npx hardhat run scripts/fund-test-agents.ts --network monad-mainnet");
         process.exit(1);
     }
 
@@ -46,14 +46,14 @@ async function main() {
         console.error(`\n Insufficient MON tokens!`);
         console.error(`   Need: ${ethers.formatEther(entryFee)} MON`);
         console.error(`   Have: ${ethers.formatEther(initialBalance)} MON`);
-        console.error(`\n   Run: npx hardhat run scripts/fund-test-agents.ts --network monad-testnet`);
+        console.error(`\n   Run: npx hardhat run scripts/fund-test-agents.ts --network monad-mainnet`);
         process.exit(1);
     }
 
     console.log(`    Sufficient balance\n`);
 
     // ============ Step 2: Check if Already Entered ============
-    console.log("2⃣  Checking entry status...");
+    console.log("[2] Checking entry status...");
     console.log("-".repeat(70));
 
     const stats = await treasury.getAgentStats(agent.address);
@@ -164,8 +164,8 @@ async function main() {
     // ============ Final Summary ============
     console.log(" ENTRY TEST PASSED!");
     console.log("\n Next Steps:");
-    console.log("   1. Test rewards: npx hardhat run scripts/test-rewards.ts --network monad-testnet");
-    console.log("   2. Test marketplace: npx hardhat run scripts/test-marketplace.ts --network monad-testnet");
+    console.log("   1. Test rewards: npx hardhat run scripts/test-rewards.ts --network monad-mainnet");
+    console.log("   2. Test marketplace: npx hardhat run scripts/test-marketplace.ts --network monad-mainnet");
     console.log("   3. Run full agent: npm run agent:blockchain");
 }
 

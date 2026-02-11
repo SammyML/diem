@@ -20,7 +20,7 @@ export class MonadBlockchainService {
     } = {};
 
     constructor(
-        private rpcUrl: string = 'https://testnet-rpc.monad.xyz',
+        private rpcUrl: string = 'https://rpc.monad.xyz',
         private privateKey?: string
     ) {
         this.provider = new JsonRpcProvider(this.rpcUrl);

@@ -88,17 +88,22 @@ async function runTraderAgent() {
                         }
                     });
 
-                    if (res.data.success) {
+                    if (res.data && res.data.success) {
                         console.log(`Sold ${inventoryItem.quality} Wood for ${tradeOffer.requestedMon} MON!`);
                         inventoryItem = null; // Go gather more
                     } else {
-                        console.log(`Sale failed: ${res.data.message}`);
+                        const msg = res.data?.message || 'Unknown error';
+                        console.log(`Sale failed: ${msg}`);
                         // Retry next loop
                     }
                 }
 
             } catch (error: any) {
                 console.log(`action failed: ${error.message}`);
+                if (error.response) {
+                    console.log(`   Status: ${error.response.status}`);
+                    console.log(`   Data:`, error.response.data);
+                }
             }
         }, 4000);
 
@@ -106,5 +111,14 @@ async function runTraderAgent() {
         console.error(`failed to start:`, error.message);
     }
 }
+
+// Prevent crash on unhandled errors
+process.on('uncaughtException', (err) => {
+    console.error('UNCAUGHT EXCEPTION:', err);
+});
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('UNHANDLED REJECTION:', reason);
+});
+
 
 runTraderAgent();

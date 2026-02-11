@@ -11,7 +11,7 @@ async function launchSimulation() {
 
     // Initialize service
     const blockchain = new MonadBlockchainService(
-        process.env.MONAD_RPC_URL || 'https://testnet-rpc.monad.xyz',
+        process.env.MONAD_RPC_URL || 'https://rpc.monad.xyz',
         process.env.DEPLOYER_PRIVATE_KEY
     );
     await blockchain.loadContracts();
