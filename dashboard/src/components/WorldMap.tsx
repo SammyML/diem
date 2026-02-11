@@ -21,21 +21,21 @@ interface Props {
 }
 
 const LOCATION_POSITIONS: Record<string, { x: number; y: number }> = {
-    market_square: { x: 50, y: 50 },
-    mining_caves: { x: 20, y: 75 },
-    forest: { x: 75, y: 30 },
-    tavern: { x: 30, y: 25 },
-    workshop: { x: 70, y: 70 },
-    arena: { x: 50, y: 20 }
+    market_square: { x: 50, y: 50 },  // Center
+    mining_caves: { x: 20, y: 80 },   // Bottom Left
+    forest: { x: 80, y: 20 },         // Top Right
+    tavern: { x: 20, y: 20 },         // Top Left
+    workshop: { x: 80, y: 80 },       // Bottom Right
+    arena: { x: 50, y: 15 }           // Top Center
 };
 
 const LOCATION_COLORS: Record<string, string> = {
-    market_square: '#00ff41', // Neon Green
-    mining_caves: '#ffb000',  // Neon Amber
-    forest: '#00ff9d',        // Spring Green
-    tavern: '#ff00ff',        // Neon Pink
-    workshop: '#00ffff',      // Neon Cyan
-    arena: '#ef4444'          // Red
+    market_square: '#FBBF24', // Amber/Gold (Commerce)
+    mining_caves: '#9CA3AF',  // Grey (Stone/Ore) - adjusted for visibility
+    forest: '#10B981',        // Emerald (Nature)
+    tavern: '#8B5CF6',        // Violet (Social/Nightlife)
+    workshop: '#06B6D4',      // Cyan (Tech/Craft)
+    arena: '#EF4444'          // Red (Combat)
 };
 
 const WorldMap: React.FC<Props> = ({ locations, agents }) => {
