@@ -455,7 +455,7 @@ body {
 /* Boss Overlay */
 .boss-overlay {
     position: absolute;
-    bottom: 40px;
+    bottom: 100px;
     top: auto;
     left: 40px;
     transform: none;
