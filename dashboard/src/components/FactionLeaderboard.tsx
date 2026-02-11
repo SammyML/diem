@@ -18,7 +18,7 @@ export const FactionLeaderboard: React.FC = () => {
     }, []);
 
     const fetchFactionData = async () => {
-        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
         try {
             const res = await fetch(`${API_URL}/faction/leaderboard`);
             const data = await res.json();
@@ -51,7 +51,7 @@ export const FactionLeaderboard: React.FC = () => {
             <h2 className="leaderboard-title">Faction Leaderboard</h2>
             <div className="leaderboard-list">
                 {factions.map((faction, index) => (
-                    <div key={faction.faction} className="faction-item">
+                    <div key={faction.faction} className="faction-card">
                         <div className="faction-info">
                             <div
                                 className="faction-name"

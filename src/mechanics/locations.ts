@@ -26,7 +26,7 @@ export const LOCATIONS: Location[] = [
         id: 'mining_caves',
         name: 'Mining Caves',
         description: 'Dark tunnels rich with ore deposits. Skilled miners can extract valuable resources here.',
-        capacity: 5,
+        capacity: 20,
         currentOccupancy: 0,
         resources: [
             {
@@ -55,7 +55,7 @@ export const LOCATIONS: Location[] = [
         id: 'forest',
         name: 'Ancient Forest',
         description: 'A lush forest teeming with herbs and timber. Nature provides for those who know where to look.',
-        capacity: 8,
+        capacity: 20,
         currentOccupancy: 0,
         resources: [
             {

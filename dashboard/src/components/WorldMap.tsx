@@ -16,7 +16,7 @@ interface Agent {
 }
 
 interface Props {
-    locations: Record<string, Location>;
+    locations: Record<string, Location> | Location[];
     agents: Record<string, Agent>;
 }
 
@@ -25,7 +25,8 @@ const LOCATION_POSITIONS: Record<string, { x: number; y: number }> = {
     mining_caves: { x: 20, y: 75 },
     forest: { x: 75, y: 30 },
     tavern: { x: 30, y: 25 },
-    workshop: { x: 70, y: 70 }
+    workshop: { x: 70, y: 70 },
+    arena: { x: 50, y: 20 }
 };
 
 const LOCATION_COLORS: Record<string, string> = {
@@ -33,7 +34,8 @@ const LOCATION_COLORS: Record<string, string> = {
     mining_caves: '#ffb000',  // Neon Amber
     forest: '#00ff9d',        // Spring Green
     tavern: '#ff00ff',        // Neon Pink
-    workshop: '#00ffff'       // Neon Cyan
+    workshop: '#00ffff',      // Neon Cyan
+    arena: '#ef4444'          // Red
 };
 
 const WorldMap: React.FC<Props> = ({ locations, agents }) => {
@@ -101,12 +103,30 @@ const WorldMap: React.FC<Props> = ({ locations, agents }) => {
     return (
         <div className="world-map">
             <svg viewBox="0 0 100 100" className="map-svg">
+                {/* Glow Filter Definition */}
+                <defs>
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="1.5" result="coloredBlur" />
+                        <feMerge>
+                            <feMergeNode in="coloredBlur" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
+                    <filter id="glow-text">
+                        <feGaussianBlur stdDeviation="0.5" result="coloredBlur" />
+                        <feMerge>
+                            <feMergeNode in="coloredBlur" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
+                </defs>
+
                 {/* Static Connections */}
-                <line x1="50" y1="50" x2="20" y2="75" className="connection" />
-                <line x1="50" y1="50" x2="75" y2="30" className="connection" />
-                <line x1="50" y1="50" x2="30" y2="25" className="connection" />
-                <line x1="50" y1="50" x2="70" y2="70" className="connection" />
-                <line x1="75" y1="30" x2="70" y2="70" className="connection" />
+                <line x1="50" y1="50" x2="20" y2="75" className="connection" strokeWidth="0.5" />
+                <line x1="50" y1="50" x2="75" y2="30" className="connection" strokeWidth="0.5" />
+                <line x1="50" y1="50" x2="30" y2="25" className="connection" strokeWidth="0.5" />
+                <line x1="50" y1="50" x2="70" y2="70" className="connection" strokeWidth="0.5" />
+                <line x1="75" y1="30" x2="70" y2="70" className="connection" strokeWidth="0.5" />
 
                 {/* Active Movement Trails */}
                 {trails.map(trail => (
@@ -115,6 +135,9 @@ const WorldMap: React.FC<Props> = ({ locations, agents }) => {
                         x1={trail.x1} y1={trail.y1}
                         x2={trail.x2} y2={trail.y2}
                         className="agent-trail"
+                        stroke="white"
+                        strokeWidth="0.5"
+                        filter="url(#glow)"
                     />
                 ))}
 
@@ -133,8 +156,9 @@ const WorldMap: React.FC<Props> = ({ locations, agents }) => {
                                 r={6 + (agentsHere.length * 0.5)}
                                 className="location"
                                 fill={color}
-                                fillOpacity={0.2}
+                                fillOpacity={0.15}
                                 stroke={color}
+                                strokeWidth={0.5}
                             />
                             {/* Inner core */}
                             <circle
@@ -142,6 +166,7 @@ const WorldMap: React.FC<Props> = ({ locations, agents }) => {
                                 cy={pos.y}
                                 r="2"
                                 fill={color}
+                                filter="url(#glow)"
                             />
 
                             <text
@@ -149,7 +174,11 @@ const WorldMap: React.FC<Props> = ({ locations, agents }) => {
                                 y={pos.y - 10}
                                 className="location-label"
                                 textAnchor="middle"
-                                fill={color}
+                                fill="white"
+                                fontSize="4"
+                                fontWeight="bold"
+                                fontFamily="Inter, sans-serif"
+                                style={{ textShadow: `0 0 5px ${color}` }}
                             >
                                 {location.name}
                             </text>
@@ -158,6 +187,9 @@ const WorldMap: React.FC<Props> = ({ locations, agents }) => {
                                 y={pos.y + 12}
                                 className="location-count"
                                 textAnchor="middle"
+                                fill={color}
+                                fontSize="3"
+                                fontFamily="monospace"
                             >
                                 [{agentsHere.length}/{location.maxCapacity}]
                             </text>
@@ -177,6 +209,8 @@ const WorldMap: React.FC<Props> = ({ locations, agents }) => {
                                         cy={ay}
                                         r="1.2"
                                         className="agent-marker"
+                                        fill="white"
+                                        filter="url(#glow)"
                                     >
                                         <title>{`${agent.name} | ${agent.monBalance} MON`}</title>
                                     </circle>
@@ -190,7 +224,7 @@ const WorldMap: React.FC<Props> = ({ locations, agents }) => {
             <div className="map-legend">
                 {Object.entries(LOCATION_COLORS).map(([key, color]) => (
                     <div key={key} className="legend-item">
-                        <div className="legend-color" style={{ background: color }}></div>
+                        <div className="legend-color" style={{ background: color, boxShadow: `0 0 10px ${color}` }}></div>
                         <span style={{ textTransform: 'capitalize' }}>{key.replace('_', ' ')}</span>
                     </div>
                 ))}

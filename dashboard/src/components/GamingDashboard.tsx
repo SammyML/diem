@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { PixelWorldMap } from './PixelWorldMap';
+import WorldMap from './WorldMap';
 import { FactionLeaderboard } from './FactionLeaderboard';
 import { ArenaView } from './ArenaView';
 import AgentList from './AgentList';
@@ -33,7 +33,9 @@ export const GamingDashboard: React.FC = () => {
     });
     const [season, setSeason] = useState<SeasonInfo | null>(null);
     const [agents, setAgents] = useState<Record<string, any>>({});
+    const [locations, setLocations] = useState<any[]>([]);
     const [animatedStats, setAnimatedStats] = useState<Stats>(stats);
+    const [boss, setBoss] = useState<any>(null);
 
     // Spectator Mode State
     const [events, setEvents] = useState<WorldEvent[]>([]);
@@ -74,7 +76,7 @@ export const GamingDashboard: React.FC = () => {
     }, [stats]);
 
     const fetchData = async () => {
-        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
         try {
             // ... (keep existing fetch calls)
 
@@ -83,6 +85,16 @@ export const GamingDashboard: React.FC = () => {
             const worldData = await worldRes.json();
             setAgents(worldData.agents || {});
             setEvents(worldData.events || []); // Update events
+
+            // Fetch locations for WorldMap
+            const locRes = await fetch(`${API_URL}/world/locations`);
+            const locData = await locRes.json();
+            setLocations(locData);
+
+            // Fetch boss status
+            const bossRes = await fetch(`${API_URL}/boss/status`);
+            const bossData = await bossRes.json();
+            setBoss(bossData.boss);
 
         } catch (error) {
             console.error('Failed to fetch dashboard data:', error);
@@ -102,6 +114,38 @@ export const GamingDashboard: React.FC = () => {
 
             {/* Living Generative Background (Global) */}
             <LivingBackground />
+
+            {/* Video-Style Overlays (Top-Left) */}
+            {!isSpectatorMode && (
+                <div className="dashboard-overlays-top-left">
+                    <div className="overlay-card">
+                        <div className="overlay-label">Online Agents</div>
+                        <div className="overlay-value">{animatedStats.totalAgents.toLocaleString()}</div>
+                    </div>
+                    <div className="overlay-card">
+                        <div className="overlay-label">Transactions (24h)</div>
+                        <div className="overlay-value text-green">{(animatedStats.tradesCompleted * 12 + animatedStats.itemsCrafted * 3).toLocaleString()}</div>
+                    </div>
+                </div>
+            )}
+
+
+
+            {/* Boss Health Overlay */}
+            {boss && boss.status === 'active' && (
+                <div className="boss-overlay">
+                    <div className="boss-title">THE TITAN</div>
+                    <div className="boss-health-container">
+                        <div
+                            className="boss-health-fill"
+                            style={{ width: `${Math.max(0, (boss.health / boss.maxHealth) * 100)}%` }}
+                        />
+                        <div className="boss-health-text">
+                            {boss.health} / {boss.maxHealth}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Weather Overlay (Atmosphere) */}
             <WeatherOverlay type="rain" />
@@ -178,7 +222,7 @@ export const GamingDashboard: React.FC = () => {
             <div className="dashboard-grid">
                 {/* Left Column (Map) */}
                 <div className={`grid-column left ${isSpectatorMode ? 'full-width' : ''}`}>
-                    <PixelWorldMap />
+                    <WorldMap locations={locations} agents={agents} />
                     {/* Event Log (Only in Spectator Mode) */}
                     {isSpectatorMode && <EventLog events={events} />}
                 </div>

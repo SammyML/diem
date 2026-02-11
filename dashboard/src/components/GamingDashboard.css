@@ -14,12 +14,14 @@ body {
 .gaming-dashboard {
     min-height: 100vh;
     /* Transparent to show LivingBackground */
-    background: transparent;
+    background-color: #0f172a;
     padding: 20px;
-    color: #ffffff;
+    color: #e2e8f0;
     position: relative;
     z-index: 1;
-    /* Content above background */
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    /* Prevent horizontal scroll from full-width elements */
 }
 
 /* Header */
@@ -108,6 +110,18 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 15px;
     margin-bottom: 30px;
+}
+
+.grid-column.left {
+    flex: 2;
+    background-color: rgba(15, 23, 42, 0.5);
+    /* Transparent for map visibility */
+    border-radius: 20px;
+    padding: 20px;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    /* Ensure map stays within bounds */
 }
 
 .stat-card {
@@ -238,6 +252,100 @@ body {
     margin-bottom: 30px;
 }
 
+/* Removed duplicate gaming-dashboard class that caused scrolling issues */
+
+/* Video-Style Overlays */
+.dashboard-overlays-top-left {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    display: flex;
+    gap: 40px;
+    z-index: 100;
+    pointer-events: none;
+}
+
+.overlay-card {
+    background-color: rgba(30, 41, 59, 0.8);
+    padding: 20px 40px;
+    border-radius: 16px;
+    border: 1px solid #334155;
+    backdrop-filter: blur(10px);
+}
+
+.overlay-label {
+    color: #94a3b8;
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.overlay-value {
+    color: #ffffff;
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.overlay-value.text-green {
+    color: #10b981;
+}
+
+.dashboard-overlays-bottom-right {
+    position: absolute;
+    bottom: 40px;
+    right: 40px;
+    z-index: 100;
+    pointer-events: none;
+}
+
+.live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.live-dot {
+    width: 12px;
+    height: 12px;
+    background-color: #22c55e;
+    border-radius: 50%;
+    box-shadow: 0 0 15px #22c55e;
+    animation: pulse-green 2s infinite;
+}
+
+.live-indicator span {
+    color: #22c55e;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+}
+
+@keyframes pulse-green {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Hide original stats bar if needed, or keep for detail */
+.stats-bar {
+    opacity: 0.6;
+    transform: scale(0.9);
+    transform-origin: top center;
+}
+
 .grid-column {
     display: flex;
     flex-direction: column;
@@ -342,4 +450,61 @@ body {
 
 .stat-card:nth-child(5) {
     animation-delay: 0.5s;
+}
+
+/* Boss Overlay */
+.boss-overlay {
+    position: absolute;
+    bottom: 40px;
+    top: auto;
+    left: 40px;
+    transform: none;
+    width: 400px;
+    max-width: 90%;
+    z-index: 1000;
+    pointer-events: none;
+    text-align: center;
+}
+
+.boss-title {
+    color: #ef4444;
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    text-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+    margin-bottom: 10px;
+}
+
+.boss-health-container {
+    width: 100%;
+    height: 30px;
+    background-color: #450a0a;
+    border: 2px solid #7f1d1d;
+    border-radius: 15px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.boss-health-fill {
+    height: 100%;
+    background-color: #ef4444;
+    box-shadow: 0 0 20px #ef4444;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.boss-health-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-shadow: 0 1px 2px black;
 }
