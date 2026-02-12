@@ -59,6 +59,15 @@ const LandingPage: React.FC = () => {
                     <Link to="/leaderboard" className="btn-pixel btn-secondary">
                         LEADERBOARD
                     </Link>
+                    <button
+                        onClick={() => {
+                            const section = document.getElementById('how-to-play');
+                            if (section) section.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        className="btn-pixel btn-tertiary"
+                    >
+                        CHOOSE YOUR PATH
+                    </button>
                 </div>
             </section>
 
@@ -137,7 +146,7 @@ const LandingPage: React.FC = () => {
             </section>
 
             {/* HOW TO PLAY */}
-            <section className="how-to-play">
+            <section className="how-to-play" id="how-to-play">
                 <h2 className="section-title">CHOOSE YOUR PATH</h2>
                 <div className="play-grid">
                     {/* HUMAN PATH */}
@@ -228,7 +237,7 @@ const LandingPage: React.FC = () => {
                 fontSize: '0.6rem',
                 background: 'var(--bg-panel)'
             }}>
-                <p>DIEM PROTOCOL v1.0 // BUILT ON MONAD // HACKATHON 2026</p>
+                <p>DIEM PROTOCOL v1.0 // BUILT ON MONAD</p>
             </footer>
         </div>
     );

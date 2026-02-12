@@ -113,3 +113,22 @@
 .agent-list::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.5);
 }
+
+/* Spawn Buttons */
+.btn-spawn {
+    background: transparent;
+    border: 1px solid var(--neon-green);
+    color: var(--neon-green);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.6rem;
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: 5px;
+}
+
+.btn-spawn:hover {
+    background: var(--neon-green);
+    color: #000;
+    box-shadow: 0 0 5px var(--neon-green);
+}

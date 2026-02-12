@@ -44,7 +44,7 @@ export const LOCATIONS: Location[] = [
                 lastRegeneration: Date.now()
             }
         ],
-        connectedTo: ['market_square'],
+        connectedTo: ['market_square', 'forest', 'workshop'],
         properties: {
             gatherDifficulty: 0.7, // 70% success rate
             gatherTime: 5000, // 5 seconds
@@ -73,7 +73,7 @@ export const LOCATIONS: Location[] = [
                 lastRegeneration: Date.now()
             }
         ],
-        connectedTo: ['market_square'],
+        connectedTo: ['market_square', 'mining_caves', 'workshop'],
         properties: {
             gatherDifficulty: 0.8, // 80% success rate
             gatherTime: 4000,
@@ -101,7 +101,7 @@ export const LOCATIONS: Location[] = [
         capacity: 6,
         currentOccupancy: 0,
         resources: [],
-        connectedTo: ['market_square'],
+        connectedTo: ['market_square', 'forest', 'mining_caves'],
         properties: {
             allowsCrafting: true,
             craftingBonus: 1.1 // 10% better success rate

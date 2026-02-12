@@ -35,9 +35,40 @@ const AgentList: React.FC<Props> = ({ agents }) => {
         return b.monBalance - a.monBalance;
     });
 
+    const spawnAgent = async (type: 'miner' | 'arena' | 'trader' | 'crafter') => {
+        const API = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+        try {
+            await fetch(`${API}/admin/spawn`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type })
+            });
+            alert(`Spawning ${type} agent...`);
+        } catch (e) {
+            console.error(e);
+            alert('Failed to spawn agent');
+        }
+    };
+
     return (
         <div className="agent-list">
-            <h3 className="section-title">ACTIVE AGENTS</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                <h3 className="section-title" style={{ marginBottom: 0 }}>ACTIVE AGENTS</h3>
+                <div style={{ display: 'flex', gap: '5px' }}>
+                    <button onClick={() => spawnAgent('miner')} className="btn-spawn" title="Spawn Miner">
+                        +MINE
+                    </button>
+                    <button onClick={() => spawnAgent('trader')} className="btn-spawn" title="Spawn Trader">
+                        +TRADE
+                    </button>
+                    <button onClick={() => spawnAgent('crafter')} className="btn-spawn" title="Spawn Crafter">
+                        +CRAFT
+                    </button>
+                    <button onClick={() => spawnAgent('arena')} className="btn-spawn" title="Spawn Gladiator">
+                        +FIGHT
+                    </button>
+                </div>
+            </div>
             {agentList.length === 0 ? (
                 <div className="empty-state">No agents in the world yet...</div>
             ) : (
@@ -72,7 +103,8 @@ const AgentList: React.FC<Props> = ({ agents }) => {
                         </div>
                     ))}
                 </div>
-            )}
+            )
+            }
         </div>
     );
 };

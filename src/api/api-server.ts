@@ -1,5 +1,7 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
+import { spawn } from 'child_process';
+import path from 'path';
 import { WorldStateManager } from '../core/world-state';
 import { TokenLedger } from '../token/token-ledger';
 import { PaymentGateway } from '../token/payment-gateway';
@@ -547,6 +549,38 @@ export class ApiServer {
         this.app.get('/season/prestige/:agentId', (req, res) => {
             const prestige = seasonManager.getPrestige(req.params.agentId);
             res.json({ prestige });
+        });
+
+        // ============ Admin Endpoints ============
+
+        this.app.post('/admin/spawn', (req, res) => {
+            const { type } = req.body; // 'miner', 'arena', 'trader', 'crafter'
+
+            const ALLOWED_TYPES = ['miner', 'arena', 'trader', 'crafter'];
+
+            if (!type || !ALLOWED_TYPES.includes(type)) {
+                return res.status(400).json({ error: `Invalid agent type. Use: ${ALLOWED_TYPES.join(', ')}` });
+            }
+
+            const scriptPath = path.join(__dirname, `../../examples/agents/${type}-agent.ts`);
+
+            // Spawn process (detached to keep running if server restarts? No, attach to server life)
+            // Using npx ts-node to ensure environment
+            console.log(`Spawning ${type} agent...`);
+
+            const child = spawn('npx', ['ts-node', scriptPath], {
+                cwd: path.join(__dirname, '../../'),
+                stdio: 'ignore', // Ignore output to prevent buffer filling? Or pipe to log?
+                detached: true,  // Let it run independently
+                shell: true      // Needed for npx on Windows
+            });
+
+            child.unref(); // Don't wait for it to exit
+
+            res.json({
+                success: true,
+                message: `Spawned ${type} agent (PID: ${child.pid})`
+            });
         });
     }
 

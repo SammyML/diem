@@ -26,6 +26,8 @@ export type { ReentrancyGuard } from "./@openzeppelin/contracts/utils/Reentrancy
 export { ReentrancyGuard__factory } from "./factories/@openzeppelin/contracts/utils/ReentrancyGuard__factory";
 export type { AgentMarketplace } from "./contracts/AgentMarketplace";
 export { AgentMarketplace__factory } from "./factories/contracts/AgentMarketplace__factory";
+export type { Arena } from "./contracts/Arena";
+export { Arena__factory } from "./factories/contracts/Arena__factory";
 export type { MONToken } from "./contracts/MONToken";
 export { MONToken__factory } from "./factories/contracts/MONToken__factory";
 export type { WorldBoss } from "./contracts/WorldBoss";

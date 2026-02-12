@@ -54,6 +54,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.AgentMarketplace__factory>;
     getContractFactory(
+      name: "Arena",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Arena__factory>;
+    getContractFactory(
       name: "MONToken",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MONToken__factory>;
@@ -117,6 +121,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.AgentMarketplace>;
     getContractAt(
+      name: "Arena",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Arena>;
+    getContractAt(
       name: "MONToken",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -173,6 +182,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AgentMarketplace>;
     deployContract(
+      name: "Arena",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Arena>;
+    deployContract(
       name: "MONToken",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MONToken>;
@@ -235,6 +248,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AgentMarketplace>;
+    deployContract(
+      name: "Arena",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Arena>;
     deployContract(
       name: "MONToken",
       args: any[],

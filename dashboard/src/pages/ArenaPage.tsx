@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ethers } from 'ethers';
 import './ArenaPage.css';
+
+// Placeholder - Replace with actual deployed address
+const ARENA_CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+const ARENA_ABI = [
+    "function placeBet(uint256 battleId, uint8 side, uint256 amount) external",
+    "function claimWinnings(uint256 battleId) external"
+];
 
 interface Battle {
     battleId: string;
@@ -20,6 +28,8 @@ const ArenaPage: React.FC = () => {
     const [openBattles, setOpenBattles] = useState<Battle[]>([]);
     const [activeBattles, setActiveBattles] = useState<Battle[]>([]);
     const [boss, setBoss] = useState<Boss | null>(null);
+    const [wallet, setWallet] = useState<string | null>(null);
+    const [betAmount, setBetAmount] = useState<string>("10");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -45,6 +55,44 @@ const ArenaPage: React.FC = () => {
         return () => clearInterval(interval);
     }, []);
 
+    const connectWallet = async () => {
+        if (window.ethereum) {
+            try {
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                await provider.send("eth_requestAccounts", []);
+                const signer = provider.getSigner();
+                setWallet(await signer.getAddress());
+            } catch (err) {
+                console.error("Wallet connection failed", err);
+            }
+        } else {
+            alert("Please install MetaMask!");
+        }
+    };
+
+    const placeBet = async (battleId: string, side: number) => {
+        if (!wallet) return alert("Connect Wallet first!");
+        try {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            const contract = new ethers.Contract(ARENA_CONTRACT_ADDRESS, ARENA_ABI, signer);
+
+            // Parse battleId from string guid to uint256 if needed, or use hash
+            // For this demo, we assume the string is numeric or handled by backend mapping
+            // But standard UUIDs don't fit in uint256 directly without hashing.
+            // We'll mock the ID for now as hash(battleId)
+            const id = ethers.BigNumber.from(ethers.utils.id(battleId));
+            const amount = ethers.utils.parseEther(betAmount);
+
+            const tx = await contract.placeBet(id, side, amount);
+            await tx.wait();
+            alert(`Bet Placed on Side ${side === 0 ? 'Challenger' : 'Opponent'}!`);
+        } catch (err) {
+            console.error("Betting failed", err);
+            alert("Betting failed. See console.");
+        }
+    };
+
     const healthPercent = boss ? (boss.health / boss.maxHealth) * 100 : 0;
 
     return (
@@ -52,6 +100,18 @@ const ArenaPage: React.FC = () => {
             <Link to="/app" className="btn-pixel btn-secondary" style={{ position: 'absolute', top: 20, left: 20 }}>
                 ← BACK TO SIM
             </Link>
+
+            <div style={{ position: 'absolute', top: 20, right: 20 }}>
+                {!wallet ? (
+                    <button onClick={connectWallet} className="btn-pixel btn-primary">
+                        CONNECT WALLET
+                    </button>
+                ) : (
+                    <span className="btn-pixel btn-outline" style={{ color: 'var(--neon-green)' }}>
+                        {wallet.slice(0, 6)}...{wallet.slice(-4)}
+                    </span>
+                )}
+            </div>
 
             <header className="arena-header">
                 <h1>THE ARENA</h1>
@@ -104,14 +164,39 @@ const ArenaPage: React.FC = () => {
                         <div key={b.battleId} className="battle-card active">
                             <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--gold)' }}>
                                 <span>DUEL #{b.battleId.slice(0, 4)}</span>
-                                <span>{b.wager} MON</span>
+                                <span>{b.wager} MON POOL</span>
                             </div>
                             <div className="fighters">
-                                <span>{b.challenger}</span>
+                                <div className="fighter-side">
+                                    <span>{b.challenger}</span>
+                                    {wallet && (
+                                        <button onClick={() => placeBet(b.battleId, 0)} className="btn-bet">
+                                            BET CHALLENGER
+                                        </button>
+                                    )}
+                                </div>
                                 <span className="vs-badge">VS</span>
-                                <span>{b.opponent}</span>
+                                <div className="fighter-side">
+                                    <span>{b.opponent}</span>
+                                    {wallet && (
+                                        <button onClick={() => placeBet(b.battleId, 1)} className="btn-bet">
+                                            BET OPPONENT
+                                        </button>
+                                    )}
+                                </div>
                             </div>
-                            <div style={{ color: 'var(--neon-green)', fontSize: '0.7rem', textAlign: 'center' }}>
+                            {wallet && (
+                                <div style={{ textAlign: 'center', marginTop: '10px' }}>
+                                    <input
+                                        type="number"
+                                        value={betAmount}
+                                        onChange={(e) => setBetAmount(e.target.value)}
+                                        style={{ width: '60px', background: '#000', color: '#fff', border: '1px solid #333', marginRight: '5px' }}
+                                    />
+                                    <span style={{ fontSize: '0.7rem', color: '#888' }}>MON WAGER</span>
+                                </div>
+                            )}
+                            <div style={{ color: 'var(--neon-green)', fontSize: '0.7rem', textAlign: 'center', marginTop: '10px' }}>
                                 /// COMBAT IN PROGRESS ///
                             </div>
                         </div>

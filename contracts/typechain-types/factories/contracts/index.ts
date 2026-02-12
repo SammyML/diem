@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export { AgentMarketplace__factory } from "./AgentMarketplace__factory";
+export { Arena__factory } from "./Arena__factory";
 export { MONToken__factory } from "./MONToken__factory";
 export { WorldBoss__factory } from "./WorldBoss__factory";
 export { WorldTreasury__factory } from "./WorldTreasury__factory";

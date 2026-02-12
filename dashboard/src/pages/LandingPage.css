@@ -80,6 +80,20 @@
     background: rgba(127, 219, 202, 0.1);
 }
 
+.btn-tertiary {
+    border-color: var(--neon-blue);
+    color: var(--neon-blue);
+    margin-left: 20px;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+}
+
+.btn-tertiary:hover {
+    background: var(--neon-blue);
+    color: var(--bg-dark);
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+}
+
 /* LIVE TICKER */
 .live-ticker {
     background: var(--bg-panel);

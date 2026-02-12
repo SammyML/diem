@@ -1,100 +1,142 @@
-# Diem - Multi-Agent Economy on Monad
 
-Diem is an on-chain simulation where AI agents live, trade, and fight. We built this to demonstrate what a truly autonomous economy looks like on a high-performance blockchain like Monad.
+# Diem: Autonomous AI Agent Economy
 
-Unlike most "games" where you click buttons, **Diem plays itself.** Agents make decisions, earn MON tokens, and compete for resources without human intervention. You just watch the chaos unfold.
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18.0-61dafb.svg)](https://reactjs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-18.0-green.svg)](https://nodejs.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[![Solidity](https://img.shields.io/badge/Solidity-0.8.20-blue)](https://soliditylang.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
-[![Monad](https://img.shields.io/badge/Monad-Mainnet-green)](https://monad.xyz/)
+**Diem** is a persistent, autonomous virtual world where AI agents live, trade, craft, and fight. 
 
-## What Actually Is This?
-
-It's a persistent world running on Monad Mainnet.
-- **Agents are autonomous:** They pay entry fees, gather resources, craft items, and trade on a seminal marketplace.
-- **The economy is real:** Every action (move, craft, trade) is a blockchain transaction.
-- **The stakes are high:** Agents can team up to fight a World Boss (The Titan) or bet on 1v1 battles in the Arena.
-
-## Live Dashboard
-
-We built a "Command Center" style dashboard to visualize the chain state in real-time.
-
-**Live Demo:** https://diem-zeta.vercel.app/
-**Backend API:** https://diem-backend.onrender.com/
-**Local URL:** http://localhost:3000
-
-### Unique Features
-- **The Titan:** A world boss with 10,000 HP. Agents have to coordinate to take it down. We built a custom widget (Bottom Left) to track its health in real-time.
-- **PvP Arena:** Agents can wager MON on fights. We added a dedicated map location (Red Zone at 50, 20) for this.
-- **Living Visuals:** The map isn't static. It uses a "living network" background and neon-styled markers to show agent allegiance and movement.
-- **Factions:** Agents join one of three factions (Wardens, Cult, Salvagers). The leaderboard on the right shows who's winning the weekly war.
+Unlike traditional games where a human controls a character, **Diem plays itself.** You act as the "God" or "Operator", spawning autonomous agents that execute complex logic loops to accumulate wealth (MON) and glory.
 
 ---
 
-## Quick Start (Run it locally)
+## 🌍 The World
 
-You'll need Node.js 16+ and a Monad wallet with some MON.
+The simulation runs on a central server that manages:
+1.  **Economy:** A closed-loop system of resource gathering, crafting, and trading.
+2.  **Conflict:** A PvP Arena and a server-wide Raid Boss (The Titan).
+3.  **Factions:** Agents pledge allegiance to factions (Wardens, Salvagers, Cult) and vie for territory.
 
-### 1. Setup
+### 🕹️ Live Dashboard
+The "Command Center" allows you to visualize the chaos in real-time.
+*   **Spectate:** Watch battles in the Arena.
+*   **Monitor:** Track global economic volume and agent populations.
+*   **Intervene:** Spawn new agents to disrupt the balance.
+
+---
+
+## 🤖 The Agents
+
+The system currently supports four distinct agent classes, each with unique behavioral logic:
+
+### 1. The Miner (`miner-agent.ts`)
+*   **Role:** Resource Generator.
+*   **Logic:** Scans the map for resource nodes (Forests, Caves). Travels to them, gathers raw materials (Wood, Ore, Gems), and sells them at the Market when inventory is full.
+
+### 2. The Crafter (`crafter-agent.ts`)
+*   **Role:** Manufacturer.
+*   **Logic:** Monitors market prices for raw materials. Buys ingredients (Wood/Ore), travels to the Workshop to craft high-value items (Tools, Potions), and lists them for profit. Uses intelligent pathfinding to gather missing ingredients if the market is empty.
+
+### 3. The Trader (`trader-agent.ts`)
+*   **Role:** Arbitrageur.
+*   **Logic:** Does not produce anything. It moves between locations, buying low and selling high. It identifies shortages in specific zones (e.g., lack of Wood at the Workshop) and fulfills the demand.
+
+### 4. The Gladiator (`arena-agent.ts`)
+*   **Role:** Warrior.
+*   **Logic:** exists only for combat.
+    *   **PvP:** Scans for open challenges in the Arena.
+    *   **PvE:** If no challengers exist, it attacks **The Titan** (World Boss).
+    *   **Betting:** Wealthy agents will place bets on outcomes.
+
+---
+
+## ⚡ Quick Start
+
+You can run the full simulation locally with just a few commands.
+
+### Prerequisites
+*   Node.js 16+
+*   npm
+
+### 1. Installation
 ```bash
 git clone https://github.com/SammyML/diem.git
 cd Diem
 
-# Install dependencies (root, contracts, dashboard)
+# Install root dependencies
 npm install
-cd contracts && npm install && cd ..
-cd dashboard && npm install && cd ..
+
+# Install Dashboard dependencies
+cd dashboard
+npm install
+cd ..
 ```
 
-### 2. Configure
-Copy `.env.example` to `.env` and add your private key.
-```bash
-cp .env.example .env
-```
-*Note: Make sure `BLOCKCHAIN_ENABLED=true` if you want to hit the mainnet.*
-
-### 3. Launch
-You need **3 terminals** to run the full stack:
-
-**Terminal 1: The Backend (API)**
+### 2. Launch the Backend
+Start the API Server. This hosts the world state, economy, and agent logic.
 ```bash
 npm run start:server
-# Runs on Port 3001
+# Running on http://localhost:3001
 ```
 
-**Terminal 2: The Frontend (Dashboard)**
+### 3. Launch the Dashboard
+Open the visualization in your browser.
 ```bash
 cd dashboard
 npm start
-# Runs on Port 3000
+# Opens http://localhost:3000
 ```
 
-**Terminal 3: The Simulation (Agents)**
-```bash
-# This script spawns 10 agents, joins factions, and starts the chaos
-node scripts/seed-world.js
-```
+### 4. Spawn Agents
+1.  Go to the **Dashboard** in your browser.
+2.  Look at the **Right Panel** (Agent List).
+3.  Use the **Spawn Buttons** to populate the world:
+    *   `+MINE` (Add Miners)
+    *   `+TRADE` (Add Traders)
+    *   `+CRAFT` (Add Crafters)
+    *   `+FIGHT` (Add Gladiators)
 
 ---
 
-## The Tech Stack
+## 🏰 Key Features
 
-We kept it robust but simple:
-- **Smart Contracts:** Solidity (Hardhat). We use `ReentrancyGuard` and custom errors to save gas.
-- **Backend:** Node.js + Express. Handles the nonce logic and wallet management for the bots.
-- **Frontend:** React + Recharts. Uses a WebSocket to pump live events from the chain to your screen.
+### The Arena & Betting
+Agents can challenge each other to 1v1 duels for a wager (e.g., 50 MON). Spectators (including you) can verify these battles on-chain or simply watch the "Live Duels" feed on the Arena page.
 
-## Project Structure
+### The Titan (Raid Boss)
+A server-wide event. The Titan has massive health (10,000 HP).
+*   **Reward:** Breaking the Titan releases a massive MON bounty to all participants.
+*   **Strategy:** Requires a swarm of Gladiators to take down.
 
-- `contracts/` - The Solidity logic (Token, Treasury, Marketplace, Boss).
-- `src/` - The Node.js backend that drives the agents.
-- `dashboard/` - The React UI code.
-- `scripts/` - Utilities to deploy contracts and seed the world.
-
-## Contributing
-
-Found a bug? Want to add a new agent strategy?
-Feel free to open a PR. We're actively looking for better trading algorithms for the `SimTrader` bot.
+### Living Economy
+Prices are not fixed. If Miners flood the market with Wood, the price crashes. If Crafters buy up all the Ore, the price spikes. This creates a realistic supply-and-demand curve.
 
 ---
-*Built for the Monad Hackathon.*
+
+## 🛠️ Project Structure
+
+*   **/src** - The Node.js backend (API, Agent Logic, World State).
+    *   **/api** - Express server endpoints.
+    *   **/mechanics** - Game rules (Crafting, Combat, Resources).
+    *   **/core** - State management.
+*   **/dashboard** - The React Frontend.
+    *   **/src/components** - UI Widgets (AgentList, WorldMap).
+    *   **/src/pages** - Main views (Arena, Factions).
+*   **/examples/agents** - The brain code for each agent type.
+    *   `miner-agent.ts`
+    *   `crafter-agent.ts`
+    *   `trader-agent.ts`
+    *   `arena-agent.ts`
+
+---
+
+## 🤝 Contributing
+
+We are looking for:
+*   **Better AI:** Smart agents that form alliances.
+*   **Visuals:** More particle effects for the "Living Network".
+*   **Contracts:** Solidity improvements for gas optimization.
+
+Pull Requests are welcome!
