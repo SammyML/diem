@@ -600,7 +600,7 @@ export class ApiServer {
             try {
                 const child = spawn(command, args, {
                     cwd: cwd,
-                    stdio: 'ignore', // Keep as ignore for now, or 'inherit' for debugging logs
+                    stdio: 'inherit', // Changed to inherit to see logs in Render console
                     detached: true,
                     shell: true      // Needed for npx on Windows, and helpful generally
                 });

@@ -72,8 +72,63 @@ export class MonadBlockchainService {
     }
 
     private loadABI(contractName: string): any[] {
-        // Resolve path relative to this file (dist/blockchain/monad-service.js)
+        // Resolve path relative to this file (dist/src/blockchain/monad-service.js)
         // We want to go to dist/contracts/artifacts/...
+        // ../ -> dist/src
+        // ../../ -> dist
+        // ../../../contracts -> dist/contracts (wait, no)
+        // dist/src/blockchain -> .. (dist/src) -> .. (dist).
+        // Contracts are in dist/contracts.
+        // So ../../contracts is correct if we are in dist/src/blockchain?
+        // Let's count:
+        // __dirname = dist/src/blockchain
+        // path.join(__dirname, '../../contracts')
+        // up 1: dist/src
+        // up 2: dist
+        // down: contracts
+        // So ../../contracts IS correct.
+
+        // Wait, previously it was ../../contracts/artifacts.
+        // That was when __dirname was dist/blockchain.
+        // NOW __dirname is dist/src/blockchain.
+        // So up 1: dist/src
+        // up 2: dist
+        // So ../../contracts takes us to dist/contracts.
+        // So the path IS still ../../contracts/artifacts.
+
+        // LET ME RE-VERIFY.
+        // Old structure: dist/blockchain/monad-service.js
+        // New structure: dist/src/blockchain/monad-service.js
+
+        // Old path: ../../contracts/artifacts
+        // dist/blockchain -> .. (dist) -> .. (root?? No, expected dist/contracts).
+        // If contracts were in dist/contracts.
+        // Then dist/blockchain -> .. (dist) -> contracts.
+        // That would be ../contracts.
+        // Why was it ../../?
+        // Maybe it pointed to ROOT contracts? 
+        // If it was ../../contracts, it pointed to root/contracts?
+        // dist/blockchain -> .. (dist) -> .. (root).
+        // Yes, likely.
+
+        // NOW we want to point to dist/contracts.
+        // dist/src/blockchain -> .. (dist/src) -> .. (dist) -> contracts.
+        // So ../../contracts.
+
+        // IF we want to point to ROOT contracts (if not copied to dist/contracts? but we ARE copying).
+        // Postbuild script: copyDir('contracts/artifacts', 'dist/contracts/artifacts');
+        // So artifacts ARE in dist/contracts/artifacts.
+
+        // So we need path from dist/src/blockchain -> dist/contracts/artifacts.
+        // dist/src/blockchain
+        // ../ -> dist/src
+        // ../../ -> dist
+        // ../../contracts/artifacts -> dist/contracts/artifacts.
+
+        // So ../../contracts/artifacts IS CORRECT.
+        // I don't need to change it to ../../../.
+
+        // Use path.resolve to be sure? No, join is fine.
         const artifactPath = path.join(__dirname, `../../contracts/artifacts/contracts/${contractName}.sol/${contractName}.json`);
 
         try {
