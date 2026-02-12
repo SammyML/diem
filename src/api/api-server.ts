@@ -562,25 +562,63 @@ export class ApiServer {
                 return res.status(400).json({ error: `Invalid agent type. Use: ${ALLOWED_TYPES.join(', ')}` });
             }
 
-            const scriptPath = path.join(__dirname, `../../examples/agents/${type}-agent.ts`);
+            // Determine if we are in production or development
+            // In production (Render), we run from 'dist/src/api/api-server.js' (or similar), so we need to find 'dist/examples/agents/...'
+            // In development, we run 'src/api/api-server.ts' via ts-node, so we need 'examples/agents/...'
 
-            // Spawn process (detached to keep running if server restarts? No, attach to server life)
-            // Using npx ts-node to ensure environment
-            console.log(`Spawning ${type} agent...`);
+            const isProduction = process.env.NODE_ENV === 'production' || __dirname.includes('dist');
 
-            const child = spawn('npx', ['ts-node', scriptPath], {
-                cwd: path.join(__dirname, '../../'),
-                stdio: 'ignore', // Ignore output to prevent buffer filling? Or pipe to log?
-                detached: true,  // Let it run independently
-                shell: true      // Needed for npx on Windows
-            });
+            let command = 'npx';
+            let args: string[] = [];
+            let cwd = path.join(__dirname, '../../'); // Default to root
 
-            child.unref(); // Don't wait for it to exit
+            if (isProduction) {
+                // Production: Run compiled JS with node
+                // Assuming structure:
+                // root/dist/src/api/api-server.js -> __dirname
+                // root/dist/examples/agents/xxx-agent.js -> Target
 
-            res.json({
-                success: true,
-                message: `Spawned ${type} agent (PID: ${child.pid})`
-            });
+                const scriptPath = path.join(__dirname, `../../examples/agents/${type}-agent.js`);
+
+                console.log(`[Prod] Spawning ${type} agent from ${scriptPath}`);
+
+                command = 'node';
+                args = [scriptPath];
+                // cwd stays as root of the project (where node_modules are) or can be inferred
+            } else {
+                // Development: Run TS with ts-node
+                const scriptPath = path.join(__dirname, `../../examples/agents/${type}-agent.ts`);
+
+                console.log(`[Dev] Spawning ${type} agent from ${scriptPath}`);
+
+                command = 'npx';
+                args = ['ts-node', scriptPath];
+            }
+
+            console.log(`Executing: ${command} ${args.join(' ')}`);
+
+            try {
+                const child = spawn(command, args, {
+                    cwd: cwd,
+                    stdio: 'ignore', // Keep as ignore for now, or 'inherit' for debugging logs
+                    detached: true,
+                    shell: true      // Needed for npx on Windows, and helpful generally
+                });
+
+                child.on('error', (err) => {
+                    console.error('Failed to spawn agent process:', err);
+                });
+
+                child.unref();
+
+                res.json({
+                    success: true,
+                    message: `Spawned ${type} agent (PID: ${child.pid})`
+                });
+            } catch (error: any) {
+                console.error('Spawn error:', error);
+                res.status(500).json({ error: `Failed to spawn agent: ${error.message}` });
+            }
         });
     }
 
