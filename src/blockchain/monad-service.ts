@@ -72,9 +72,17 @@ export class MonadBlockchainService {
     }
 
     private loadABI(contractName: string): any[] {
+        // Resolve path relative to this file (dist/blockchain/monad-service.js)
+        // We want to go to dist/contracts/artifacts/...
         const artifactPath = path.join(__dirname, `../../contracts/artifacts/contracts/${contractName}.sol/${contractName}.json`);
-        const artifact = JSON.parse(fs.readFileSync(artifactPath, 'utf-8'));
-        return artifact.abi;
+
+        try {
+            const artifact = JSON.parse(fs.readFileSync(artifactPath, 'utf-8'));
+            return artifact.abi;
+        } catch (e) {
+            console.error(`Failed to load ABI from ${artifactPath}`, e);
+            throw e;
+        }
     }
 
     /**
