@@ -48,6 +48,21 @@ export class ApiServer {
     }
 
     private setupRoutes(): void {
+        // Root route
+        this.app.get('/', (req, res) => {
+            res.json({
+                service: 'Diem API Server',
+                status: 'running',
+                mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+                version: '1.0.0',
+                endpoints: [
+                    '/health',
+                    '/world/state',
+                    '/world/locations'
+                ]
+            });
+        });
+
         // Health check
         this.app.get('/health', (req, res) => {
             res.json({ status: 'ok', timestamp: Date.now() });
