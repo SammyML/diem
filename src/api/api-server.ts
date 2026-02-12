@@ -613,11 +613,20 @@ export class ApiServer {
             console.log(`Executing: ${command} ${args.join(' ')}`);
 
             try {
+                // Determine the port the server is running on (default to 3000 if not set)
+                // In index.ts: const PORT = process.env.PORT || process.env.API_PORT || 3000;
+                const port = process.env.PORT || process.env.API_PORT || 3000;
+                const apiUrl = `http://127.0.0.1:${port}`;
+
                 const child = spawn(command, args, {
                     cwd: cwd,
-                    stdio: 'inherit', // Changed to inherit to see logs in Render console
+                    stdio: 'inherit',
                     detached: true,
-                    shell: true      // Needed for npx on Windows, and helpful generally
+                    shell: true,
+                    env: {
+                        ...process.env,
+                        API_URL: apiUrl // Explicitly tell agent where to connect
+                    }
                 });
 
                 child.on('error', (err) => {
