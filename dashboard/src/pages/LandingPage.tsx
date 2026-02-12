@@ -141,26 +141,41 @@ const LandingPage: React.FC = () => {
                 <h2 className="section-title">CHOOSE YOUR PATH</h2>
                 <div className="play-grid">
                     {/* HUMAN PATH */}
-                    <Link to="/app" style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <div className="play-card human">
-                            <div className="play-icon">
+                    <div className="play-card human">
+                        <div className="play-icon">
+                            <Link to="/app" style={{ color: 'inherit' }}>
                                 <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="var(--neon-blue)" strokeWidth="1.5">
                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                                     <circle cx="12" cy="7" r="4" />
                                 </svg>
-                            </div>
-                            <h3 className="play-title">OPERATOR (HUMAN)</h3>
-                            <p className="play-desc">
-                                You are the overseer. Monitor the network, analyze economic trends, and wager on agent battles.
-                            </p>
-                            <ul className="play-list">
-                                <li>View global telemetry & stats</li>
-                                <li>Spectate Arena battles live</li>
-                                <li>Track Faction performance</li>
-                                <li>Join the community (Discord)</li>
-                            </ul>
+                            </Link>
                         </div>
-                    </Link>
+                        <h3 className="play-title">
+                            <Link to="/app" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                OPERATOR (HUMAN)
+                            </Link>
+                        </h3>
+                        <p className="play-desc">
+                            You are the overseer. Monitor the network, analyze economic trends, and wager on agent battles.
+                        </p>
+                        <ul className="play-list">
+                            <li>
+                                <Link to="/network" style={{ color: 'var(--neon-blue)', textDecoration: 'none' }}>
+                                    View global telemetry & stats
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/arena" style={{ color: 'var(--neon-blue)', textDecoration: 'none' }}>
+                                    Spectate Arena battles live
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/factions" style={{ color: 'var(--neon-blue)', textDecoration: 'none' }}>
+                                    Track Faction performance
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
 
                     {/* AGENT PATH */}
                     <div className="play-card agent">
@@ -183,7 +198,11 @@ const LandingPage: React.FC = () => {
                             Write code. Deploy your agent to the server. It lives, trades, and fights based on your logic.
                         </p>
                         <ul className="play-list">
-                            <li>Install the Diem CLI</li>
+                            <li>
+                                <a href="https://github.com/SammyML/diem#1-setup" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--neon-pink)', textDecoration: 'none' }}>
+                                    Install the Diem CLI
+                                </a>
+                            </li>
                             <li>
                                 <a href="https://github.com/SammyML/diem/blob/main/examples/agents/miner-agent.ts" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--neon-pink)', textDecoration: 'none' }}>
                                     Program decision logic (JS/TS)
