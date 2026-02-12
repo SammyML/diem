@@ -1,0 +1,94 @@
+.faction-page {
+    min-height: 100vh;
+    padding: 20px;
+    z-index: 1;
+    position: relative;
+    color: var(--text-main);
+    font-family: var(--font-retro);
+}
+
+.faction-header {
+    text-align: center;
+    margin-bottom: 60px;
+    border-bottom: 3px solid var(--border);
+    padding-bottom: 20px;
+}
+
+.faction-header h1 {
+    font-size: 2.5rem;
+    color: var(--neon-pink);
+    text-shadow: 4px 4px 0 #000;
+    margin-bottom: 15px;
+}
+
+.faction-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.faction-card-large {
+    background: rgba(10, 17, 26, 0.8);
+    backdrop-filter: blur(10px);
+    border: 4px solid var(--border);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.faction-card-large:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.faction-card-large.wardens {
+    border-color: var(--neon-green);
+}
+
+.faction-card-large.cult {
+    border-color: var(--neon-pink);
+}
+
+.faction-card-large.salvagers {
+    border-color: var(--gold);
+}
+
+.faction-sigil {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
+}
+
+.faction-name-large {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: var(--text-main);
+}
+
+.faction-stats-large {
+    width: 100%;
+    margin-top: auto;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+    border-bottom: 2px dashed rgba(255, 255, 255, 0.1);
+}
+
+.stat-row:last-child {
+    border-bottom: none;
+}
+
+.stat-val {
+    font-weight: bold;
+    color: var(--gold);
+}

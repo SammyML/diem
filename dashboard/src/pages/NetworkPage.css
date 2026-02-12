@@ -1,0 +1,135 @@
+.network-page {
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+    color: var(--text-main);
+}
+
+.network-header {
+    text-align: center;
+    border-bottom: 3px solid var(--border);
+    padding-bottom: 20px;
+    margin-bottom: 40px;
+}
+
+.network-header h1 {
+    font-size: 3rem;
+    color: var(--neon-blue);
+    text-shadow: 0 0 20px rgba(0, 100, 255, 0.5);
+    letter-spacing: 5px;
+}
+
+/* KPIS */
+.network-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.kpi-card {
+    background: rgba(10, 17, 26, 0.8);
+    border: 2px solid var(--border);
+    padding: 20px;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.kpi-card:hover {
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 15px rgba(0, 100, 255, 0.3);
+}
+
+.kpi-label {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.kpi-value {
+    font-size: 2.5rem;
+    color: var(--text-main);
+    text-shadow: 2px 2px 0 #000;
+}
+
+.kpi-value.green {
+    color: var(--neon-green);
+}
+
+.kpi-value.blue {
+    color: var(--neon-blue);
+}
+
+.kpi-value.gold {
+    color: var(--gold);
+}
+
+/* SECTIONS */
+.network-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+.network-section {
+    background: rgba(10, 17, 26, 0.6);
+    border: 3px solid var(--border);
+    padding: 20px;
+    height: 600px;
+    overflow-y: auto;
+}
+
+.section-title {
+    color: var(--neon-blue);
+    margin-bottom: 20px;
+    border-bottom: 1px dashed var(--text-dim);
+    padding-bottom: 10px;
+}
+
+/* AGENT LIST */
+.agent-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.8rem;
+}
+
+.agent-row:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.agent-status {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--text-dim);
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.agent-status.online {
+    background: var(--neon-green);
+    box-shadow: 0 0 5px var(--neon-green);
+}
+
+/* FEED */
+.feed-item {
+    font-size: 0.75rem;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-dim);
+}
+
+.feed-item .highlight {
+    color: var(--gold);
+}
+
+@media (max-width: 1000px) {
+    .network-grid {
+        grid-template-columns: 1fr;
+    }
+}

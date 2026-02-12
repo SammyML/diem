@@ -1,55 +1,119 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import './CinematicBackground.css';
 
-interface CinematicBackgroundProps {
-    videoUrl?: string;
-    overlayType?: 'cyberpunk' | 'clean';
-}
-
-export const CinematicBackground: React.FC<CinematicBackgroundProps> = ({
-    videoUrl = 'https://cdn.pixabay.com/video/2020/07/03/43743-436365005_large.mp4',
-    // Fallback: A free stock video of a cyberpunk-style city or digital connection
-    // Note: User can replace this with a local /background.mp4
-    overlayType = 'cyberpunk'
-}) => {
-    const videoRef = useRef<HTMLVideoElement>(null);
+const CinematicBackground: React.FC = () => {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
-        if (videoRef.current) {
-            videoRef.current.playbackRate = 0.8; // Slow down slightly for atmosphere
-            // Force play
-            videoRef.current.play().catch(e => console.error("Video Autoplay Blocked:", e));
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        let animationFrameId: number;
+        let stars: Star[] = [];
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+
+        // Configuration
+        const STAR_COUNT = 200;
+        const SPEED = 0.05;
+
+        class Star {
+            x: number;
+            y: number;
+            z: number;
+            size: number;
+            color: string;
+
+            constructor() {
+                this.x = (Math.random() - 0.5) * width * 2;
+                this.y = (Math.random() - 0.5) * height * 2;
+                this.z = Math.random() * width;
+                this.size = Math.random() * 2;
+
+                // Randomly assign slight color variations for realism
+                const colors = ['#ffffff', '#ffe9c4', '#d4fbff'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                // Move towards viewer
+                this.z -= SPEED * 50; // Speed factor
+
+                // Reset if passed viewer
+                if (this.z <= 0) {
+                    this.z = width;
+                    this.x = (Math.random() - 0.5) * width * 2;
+                    this.y = (Math.random() - 0.5) * height * 2;
+                }
+            }
+
+            draw() {
+                if (!ctx) return;
+
+                // Projection logic (3D -> 2D)
+                const sx = (this.x / this.z) * width + width / 2;
+                const sy = (this.y / this.z) * height + height / 2;
+
+                // Scale size by depth
+                const radius = (1 - this.z / width) * this.size * 2;
+
+                if (radius > 0 && sx > 0 && sx < width && sy > 0 && sy < height) {
+                    ctx.beginPath();
+                    ctx.arc(sx, sy, radius, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+
+                    // Add glow for closer stars
+                    if (radius > 1.5) {
+                        ctx.shadowBlur = 10;
+                        ctx.shadowColor = this.color;
+                    } else {
+                        ctx.shadowBlur = 0;
+                    }
+
+                    ctx.fill();
+                }
+            }
         }
+
+        const init = () => {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+            stars = Array.from({ length: STAR_COUNT }, () => new Star());
+        };
+
+        const animate = () => {
+            if (!ctx) return;
+
+            // Clear with trail effect for "warp speed" feel
+            ctx.fillStyle = 'rgba(5, 10, 16, 0.2)'; // Var(--bg-dark) with opacity
+            ctx.fillRect(0, 0, width, height);
+
+            stars.forEach(star => {
+                star.update();
+                star.draw();
+            });
+
+            animationFrameId = requestAnimationFrame(animate);
+        };
+
+        const handleResize = () => init();
+
+        window.addEventListener('resize', handleResize);
+        init();
+        animate();
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            cancelAnimationFrame(animationFrameId);
+        };
     }, []);
 
-    const handleError = (e: any) => {
-        console.error("Video Error:", e.currentTarget.error, "Src:", e.currentTarget.currentSrc);
-    };
-
-    return (
-        <div className="cinematic-background-container">
-            {/* HTML5 Video Layer */}
-            <video
-                ref={videoRef}
-                className="cinematic-video"
-                autoPlay
-                loop
-                muted
-                playsInline
-                onError={handleError}
-            >
-                {/* Fallback to URL immediately to ensure playback */}
-                {videoUrl && <source src={videoUrl} type="video/mp4" />}
-                Your browser does not support the video tag.
-            </video>
-
-            {/* Overlay Layers */}
-            <div className={`overlay-layer ${overlayType}`}>
-                <div className="scanlines"></div>
-                <div className="vignette"></div>
-                {/* Optional: Add a localized radial gradient for text readability */}
-                <div className="readability-gradient"></div>
-            </div>
-        </div>
-    );
+    return <canvas ref={canvasRef} className="cinematic-background" />;
 };
+
+export default CinematicBackground;

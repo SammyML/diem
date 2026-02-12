@@ -16,7 +16,7 @@ export const LOCATIONS: Location[] = [
         capacity: 20,
         currentOccupancy: 0,
         resources: [],
-        connectedTo: ['mining_caves', 'forest', 'tavern', 'workshop'],
+        connectedTo: ['mining_caves', 'forest', 'tavern', 'workshop', 'arena'],
         properties: {
             isSafeZone: true,
             allowsTrading: true

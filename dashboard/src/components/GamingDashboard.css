@@ -13,15 +13,121 @@ body {
 
 .gaming-dashboard {
     min-height: 100vh;
-    /* Transparent to show LivingBackground */
-    background-color: #0f172a;
+    background-color: var(--bg-dark);
     padding: 20px;
-    color: #e2e8f0;
+    color: var(--text-main);
     position: relative;
     z-index: 1;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-retro);
     overflow-x: hidden;
-    /* Prevent horizontal scroll from full-width elements */
+}
+
+.dashboard-nav {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+}
+
+.nav-link {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-family: var(--font-retro);
+    font-size: 0.7rem;
+    padding: 5px 10px;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: var(--neon-green);
+    border-color: var(--neon-green);
+    background: rgba(0, 255, 136, 0.1);
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+}
+
+/* Header */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background: var(--bg-panel);
+    border-bottom: 3px solid var(--border);
+    margin-bottom: 20px;
+    position: relative;
+    /* Ensure below nav */
+    margin-top: 40px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.logo-section {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.game-title {
+    font-family: var(--font-retro);
+    font-size: 24px;
+    margin: 0;
+    color: var(--neon-green);
+    text-shadow: 4px 4px 0 #000;
+    letter-spacing: 2px;
+}
+
+.game-subtitle {
+    font-size: 10px;
+    color: var(--text-dim);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.season-banner {
+    background: var(--bg-dark);
+    padding: 15px 25px;
+    border: 3px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.season-label {
+    font-family: var(--font-retro);
+    font-size: 12px;
+    color: var(--gold);
+    margin-right: 20px;
+}
+
+.season-details {
+    display: flex;
+    gap: 20px;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+}
+
+.detail-label {
+    font-size: 8px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+}
+
+.detail-value {
+    font-size: 10px;
+    color: var(--text-main);
 }
 
 /* Header */
@@ -110,6 +216,103 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 15px;
     margin-bottom: 30px;
+}
+
+.grid-column.left {
+    flex: 2;
+    background-color: var(--bg-dark);
+    padding: 20px;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card {
+    background: var(--bg-panel);
+    border-radius: 4px;
+    padding: 20px;
+    border: 3px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+.stat-card::before {
+    display: none;
+    /* Remove shimmer for pixel look */
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);
+    border-color: var(--neon-green);
+}
+
+.stat-card.highlight {
+    border-color: var(--gold);
+    background: var(--bg-panel);
+}
+
+.stat-icon {
+    font-size: 24px;
+    filter: drop-shadow(2px 2px 0 #000);
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-label {
+    font-size: 8px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    font-family: var(--font-retro);
+}
+
+.stat-value {
+    font-size: 16px;
+    color: var(--neon-green);
+    font-family: var(--font-retro);
+    text-shadow: 2px 2px 0 #000;
+}
+
+.stat-card.highlight .stat-value {
+    color: var(--gold);
+    text-shadow: 2px 2px 0 #000;
+}
+
+/* Spectator Mode Overrides */
+.gaming-dashboard.spectator-mode {
+    background: #000;
+}
+
+.spectator-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 2000;
+    background: var(--bg-dark);
+    color: var(--gold);
+    border: 3px solid var(--gold);
+    padding: 10px 16px;
+    font-family: var(--font-retro);
+    font-size: 10px;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 #000;
+    transition: transform 0.1s;
+}
+
+.spectator-toggle:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #000;
+    background: var(--gold);
+    color: var(--bg-dark);
 }
 
 .grid-column.left {
@@ -254,7 +457,7 @@ body {
 
 /* Removed duplicate gaming-dashboard class that caused scrolling issues */
 
-/* Video-Style Overlays */
+/* Video-Style Overlays -> Pixel Art Overlays */
 .dashboard-overlays-top-left {
     position: absolute;
     top: 220px;
@@ -263,6 +466,90 @@ body {
     gap: 40px;
     z-index: 100;
     pointer-events: none;
+}
+
+.overlay-card {
+    background-color: var(--bg-panel);
+    padding: 20px 40px;
+    border-radius: 4px;
+    border: 3px solid var(--border);
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+}
+
+.overlay-label {
+    color: var(--text-dim);
+    font-size: 10px;
+    margin-bottom: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-family: var(--font-retro);
+}
+
+.overlay-value {
+    color: var(--text-main);
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1;
+    font-family: var(--font-retro);
+    text-shadow: 2px 2px 0 #000;
+}
+
+.overlay-value.text-green {
+    color: var(--neon-green);
+}
+
+.dashboard-overlays-bottom-right {
+    position: absolute;
+    bottom: 40px;
+    right: 40px;
+    z-index: 100;
+    pointer-events: none;
+}
+
+.live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: var(--bg-panel);
+    padding: 10px 20px;
+    border: 3px solid var(--neon-green);
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
+
+.live-dot {
+    width: 12px;
+    height: 12px;
+    background-color: var(--neon-green);
+    border-radius: 50%;
+    /* Keep round for "rec" light feel */
+    box-shadow: 0 0 15px var(--neon-green);
+    animation: pulse-green 2s infinite;
+}
+
+.live-indicator span {
+    color: var(--neon-green);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    font-family: var(--font-retro);
+    text-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+}
+
+@keyframes pulse-green {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 .overlay-card {
@@ -456,7 +743,6 @@ body {
 .boss-overlay {
     position: absolute;
     top: 15%;
-    /* Matches Arena Y position (15%) */
     left: 50%;
     transform: translateX(-50%);
     bottom: auto;
@@ -465,6 +751,55 @@ body {
     z-index: 1000;
     pointer-events: none;
     text-align: center;
+    background: var(--bg-panel);
+    border: 3px solid var(--danger);
+    padding: 20px;
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.2);
+}
+
+.boss-title {
+    color: var(--danger);
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    text-shadow: 2px 2px 0 #000;
+    margin-bottom: 15px;
+    font-family: var(--font-retro);
+}
+
+.boss-health-container {
+    width: 100%;
+    height: 30px;
+    background-color: #2a0a0a;
+    border: 3px solid #7f1d1d;
+    border-radius: 0;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 10px #000;
+}
+
+.boss-health-fill {
+    height: 100%;
+    background-color: var(--danger);
+    box-shadow: 0 0 20px var(--danger);
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.boss-health-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: var(--font-retro);
+    font-weight: bold;
+    font-size: 10px;
+    text-shadow: 2px 2px 0 black;
+    z-index: 2;
 }
 
 .boss-title {

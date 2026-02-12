@@ -1,0 +1,115 @@
+.arena-page {
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+    color: var(--text-main);
+}
+
+.arena-header {
+    text-align: center;
+    border-bottom: 3px solid var(--border);
+    padding-bottom: 20px;
+    margin-bottom: 40px;
+}
+
+.arena-header h1 {
+    font-size: 3rem;
+    color: var(--danger);
+    text-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+    letter-spacing: 5px;
+}
+
+/* TITAN SECTION */
+.titan-section {
+    background: rgba(20, 5, 5, 0.9);
+    border: 4px solid var(--danger);
+    padding: 30px;
+    margin-bottom: 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 50px rgba(255, 0, 0, 0.2);
+}
+
+.titan-avatar {
+    font-size: 6rem;
+    animation: shake 5s infinite;
+    display: inline-block;
+}
+
+.titan-health-container {
+    width: 100%;
+    height: 40px;
+    background: #300;
+    border: 3px solid var(--danger);
+    margin-top: 20px;
+    position: relative;
+}
+
+.titan-health-fill {
+    height: 100%;
+    background: var(--danger);
+    width: 100%;
+    transition: width 0.5s;
+    box-shadow: 0 0 20px var(--danger);
+}
+
+.titan-health-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-weight: bold;
+    text-shadow: 2px 2px 0 #000;
+}
+
+/* BATTLE RING */
+.battle-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 30px;
+}
+
+.battle-card {
+    background: rgba(10, 17, 26, 0.8);
+    border: 3px solid var(--border);
+    padding: 20px;
+}
+
+.battle-card.active {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+}
+
+.fighters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.2rem;
+    margin: 20px 0;
+}
+
+.vs-badge {
+    color: var(--danger);
+    font-weight: 900;
+    font-size: 1.5rem;
+    animation: pulse 0.5s infinite;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(5deg);
+    }
+
+    75% {
+        transform: rotate(-5deg);
+    }
+}

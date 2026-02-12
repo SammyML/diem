@@ -171,24 +171,27 @@ const WorldMap: React.FC<Props> = ({ locations, agents }) => {
 
                             <text
                                 x={pos.x}
-                                y={pos.y - 10}
+                                y={pos.y - 8}
                                 className="location-label"
                                 textAnchor="middle"
                                 fill="white"
-                                fontSize="4"
-                                fontWeight="bold"
-                                fontFamily="Inter, sans-serif"
-                                style={{ textShadow: `0 0 5px ${color}` }}
+                                fontSize="2.5"
+                                fontFamily="monospace"
+                                style={{ textShadow: `0 0 2px #000` }}
                             >
-                                {location.name}
+                                {location.name.split(' ').map((word, i, arr) => (
+                                    <tspan key={i} x={pos.x} dy={i === 0 ? 0 : 3.5}>
+                                        {word.toUpperCase()}
+                                    </tspan>
+                                ))}
                             </text>
                             <text
                                 x={pos.x}
-                                y={pos.y + 12}
+                                y={pos.y + 8}
                                 className="location-count"
                                 textAnchor="middle"
                                 fill={color}
-                                fontSize="3"
+                                fontSize="2"
                                 fontFamily="monospace"
                             >
                                 [{agentsHere.length}/{location.maxCapacity}]
