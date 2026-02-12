@@ -8,9 +8,9 @@ dist/
 build/
 
 # Hardhat build artifacts
-contracts/artifacts/
-contracts/cache/
-contracts/typechain-types/
+# contracts/artifacts/
+# contracts/cache/
+# contracts/typechain-types/
 
 
 # World state data
