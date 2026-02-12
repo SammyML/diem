@@ -98,7 +98,13 @@ async function main() {
         }
 
     } catch (error: any) {
-        console.error('Error:', error?.response?.data || error.message);
+        console.error('Fatal Error:', error.message);
+        if (error.response) {
+            console.error('Response Status:', error.response.status);
+            console.error('Response Data:', JSON.stringify(error.response.data));
+        } else if (error.request) {
+            console.error('No response received from server.');
+        }
     }
 }
 
