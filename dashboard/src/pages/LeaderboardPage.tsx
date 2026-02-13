@@ -13,6 +13,8 @@ interface Agent {
         losses?: number;
         itemsCrafted?: number;
         totalActions?: number;
+        exp?: number;
+        level?: number;
     };
 }
 
@@ -48,97 +50,95 @@ const LeaderboardPage: React.FC = () => {
         return 0;
     });
 
-});
+    // Filter for Arena Wins
+    const filteredAgents = sortBy === 'wins'
+        ? sortedAgents.filter(a => (a.stats?.wins || 0) > 0)
+        : sortedAgents;
 
-// Filter for Arena Wins
-const filteredAgents = sortBy === 'wins'
-    ? sortedAgents.filter(a => (a.stats?.wins || 0) > 0)
-    : sortedAgents;
+    const top3 = filteredAgents.slice(0, 3);
+    const rest = filteredAgents.slice(3, 50); // Show top 50 only
 
-const top3 = filteredAgents.slice(0, 3);
-const rest = filteredAgents.slice(3, 50); // Show top 50 only
+    return (
+        <div className="leaderboard-page">
+            <Link to="/app" className="btn-pixel btn-secondary" style={{ position: 'absolute', top: 20, left: 20 }}>
+                ← BACK TO SIM
+            </Link>
 
-return (
-    <div className="leaderboard-page">
-        <Link to="/app" className="btn-pixel btn-secondary" style={{ position: 'absolute', top: 20, left: 20 }}>
-            ← BACK TO SIM
-        </Link>
+            <header className="leaderboard-header">
+                <h1>GLOBAL RANKINGS</h1>
+                <div className="leaderboard-subtitle">TOP PERFORMING AGENTS</div>
+            </header>
 
-        <header className="leaderboard-header">
-            <h1>GLOBAL RANKINGS</h1>
-            <div className="leaderboard-subtitle">TOP PERFORMING AGENTS</div>
-        </header>
-
-        {/* CONTROLS */}
-        <div className="leaderboard-controls">
-            <button
-                className={`filter-btn ${sortBy === 'wealth' ? 'active' : ''}`}
-                onClick={() => setSortBy('wealth')}
-            >
-                [NET WORTH]
-            </button>
-            <button
-                className={`filter-btn ${sortBy === 'wins' ? 'active' : ''}`}
-                onClick={() => setSortBy('wins')}
-            >
-                [ARENA WINS]
-            </button>
-            <button
-                className={`filter-btn ${sortBy === 'expert' ? 'active' : ''}`}
-                onClick={() => setSortBy('expert')}
-            >
-                [EXP LEVEL]
-            </button>
-        </div>
-
-        {/* PODIUM */}
-        {top3.length > 0 && (
-            <div className="podium-container">
-                {/* 2nd Place */}
-                {top3[1] && <PodiumPlace agent={top3[1]} rank={2} score={getScore(top3[1], sortBy)} label={getLabel(sortBy)} />}
-                {/* 1st Place */}
-                {top3[0] && <PodiumPlace agent={top3[0]} rank={1} score={getScore(top3[0], sortBy)} label={getLabel(sortBy)} />}
-                {/* 3rd Place */}
-                {top3[2] && <PodiumPlace agent={top3[2]} rank={3} score={getScore(top3[2], sortBy)} label={getLabel(sortBy)} />}
+            {/* CONTROLS */}
+            <div className="leaderboard-controls">
+                <button
+                    className={`filter-btn ${sortBy === 'wealth' ? 'active' : ''}`}
+                    onClick={() => setSortBy('wealth')}
+                >
+                    [NET WORTH]
+                </button>
+                <button
+                    className={`filter-btn ${sortBy === 'wins' ? 'active' : ''}`}
+                    onClick={() => setSortBy('wins')}
+                >
+                    [ARENA WINS]
+                </button>
+                <button
+                    className={`filter-btn ${sortBy === 'expert' ? 'active' : ''}`}
+                    onClick={() => setSortBy('expert')}
+                >
+                    [EXP LEVEL]
+                </button>
             </div>
-        )}
 
-        {/* TABLE */}
-        <div className="leaderboard-table-container">
-            <table className="leaderboard-table">
-                <thead>
-                    <tr>
-                        <th>RANK</th>
-                        <th>AGENT</th>
-                        <th>WEALTH</th>
-                        <th>WINS</th>
-                        <th>ACTIONS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {rest.map((agent, i) => (
-                        <motion.tr
-                            key={agent.id}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: i * 0.05 }}
-                        >
-                            <td className="rank-cell">#{i + 4}</td>
-                            <td className="name-cell">{agent.name}</td>
-                            <td className="score-cell" style={{ color: sortBy === 'wealth' ? 'var(--gold)' : '' }}>
-                                {Math.floor(agent.monBalance)} MON
-                            </td>
-                            <td className="score-cell" style={{ color: sortBy === 'wins' ? 'var(--neon-green)' : '' }}>
-                                {agent.stats?.wins || 0}
-                            </td>
-                            <td>{agent.stats?.totalActions || 0}</td>
-                        </motion.tr>
-                    ))}
-                </tbody>
-            </table>
+            {/* PODIUM */}
+            {top3.length > 0 && (
+                <div className="podium-container">
+                    {/* 2nd Place */}
+                    {top3[1] && <PodiumPlace agent={top3[1]} rank={2} score={getScore(top3[1], sortBy)} label={getLabel(sortBy)} />}
+                    {/* 1st Place */}
+                    {top3[0] && <PodiumPlace agent={top3[0]} rank={1} score={getScore(top3[0], sortBy)} label={getLabel(sortBy)} />}
+                    {/* 3rd Place */}
+                    {top3[2] && <PodiumPlace agent={top3[2]} rank={3} score={getScore(top3[2], sortBy)} label={getLabel(sortBy)} />}
+                </div>
+            )}
+
+            {/* TABLE */}
+            <div className="leaderboard-table-container">
+                <table className="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>RANK</th>
+                            <th>AGENT</th>
+                            <th>WEALTH</th>
+                            <th>WINS</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {rest.map((agent, i) => (
+                            <motion.tr
+                                key={agent.id}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: i * 0.05 }}
+                            >
+                                <td className="rank-cell">#{i + 4}</td>
+                                <td className="name-cell">{agent.name}</td>
+                                <td className="score-cell" style={{ color: sortBy === 'wealth' ? 'var(--gold)' : '' }}>
+                                    {Math.floor(agent.monBalance)} MON
+                                </td>
+                                <td className="score-cell" style={{ color: sortBy === 'wins' ? 'var(--neon-green)' : '' }}>
+                                    {agent.stats?.wins || 0}
+                                </td>
+                                <td>{agent.stats?.totalActions || 0}</td>
+                            </motion.tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-);
+    );
 };
 
 const PodiumPlace = ({ agent, rank, score, label }: { agent: Agent, rank: number, score: number, label: string }) => (
