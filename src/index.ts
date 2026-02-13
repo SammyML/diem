@@ -2,18 +2,14 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import { createServer } from 'http';
-// ... imports
-
-// ...
-
-// Start server
-const PORT = process.env.PORT || process.env.API_PORT || 3000;
 import { WorldStateManager } from './core/world-state';
 import { TokenLedger } from './token/token-ledger';
 import { PaymentGateway } from './token/payment-gateway';
 import { ActionProcessor } from './api/action-processor';
 import { ApiServer } from './api/api-server';
 import { WebSocketServer } from './api/websocket-server';
+import { worldBossManager } from './mechanics/world-boss';
+import { EventType } from './types';
 
 /**
  * Main entry point for Diem virtual world
@@ -41,7 +37,6 @@ async function main() {
     // Create WebSocket server
     const wsServer = new WebSocketServer(httpServer, worldState);
 
-    // Start server
     // Start server
     const PORT = process.env.PORT || process.env.API_PORT || 3000;
     httpServer.listen(PORT, () => {
@@ -72,6 +67,25 @@ async function main() {
         worldState.saveState();
         console.log(' World state saved');
     }, 30000); // Every 30 seconds
+
+    // Check for Titan Respawn
+    setInterval(() => {
+        if (worldBossManager.shouldRespawn()) {
+            console.log('⚔️ THE TITAN RELOADS! Broadasting global event...');
+            worldBossManager.spawnBoss();
+
+            // Broadcast Event
+            wsServer.broadcastEvent({
+                id: `evt_boss_${Date.now()}`,
+                type: EventType.AGENT_JOINED, // Reusing event type for visibility, or create new one
+                agentId: 'system',
+                locationId: 'boss_arena',
+                timestamp: Date.now(),
+                description: "💀 THE TITAN HAS RETURNED! Gather your forces!",
+                data: { bossId: worldBossManager.getBossState()?.bossId }
+            });
+        }
+    }, 60000); // Check every minute
 
     // Graceful shutdown
     process.on('SIGINT', () => {
