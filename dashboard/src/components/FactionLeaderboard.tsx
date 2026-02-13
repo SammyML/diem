@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './FactionLeaderboard.css';
+import { API_BASE_URL } from '../config';
 
 interface FactionStats {
     faction: string;
@@ -18,7 +19,7 @@ export const FactionLeaderboard: React.FC = () => {
     }, []);
 
     const fetchFactionData = async () => {
-        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+        const API_URL = API_BASE_URL;
         try {
             const res = await fetch(`${API_URL}/faction/leaderboard`);
             const data = await res.json();

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './AgentList.css';
+import { API_BASE_URL } from '../config';
 
 interface Agent {
     id: string;
@@ -36,7 +37,7 @@ const AgentList: React.FC<Props> = ({ agents }) => {
     });
 
     const spawnAgent = async (type: 'miner' | 'arena' | 'trader' | 'crafter') => {
-        const API = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+        const API = API_BASE_URL;
         try {
             await fetch(`${API}/admin/spawn`, {
                 method: 'POST',

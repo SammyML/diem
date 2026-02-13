@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 import './FactionPage.css';
 
@@ -14,8 +15,8 @@ const FactionPage: React.FC = () => {
     const [factions, setFactions] = useState<FactionStats[]>([]);
 
     useEffect(() => {
-        const fetchFactions = async () => {
-            const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+        const fetchFactionData = async () => {
+            const API_URL = API_BASE_URL;
             try {
                 const res = await fetch(`${API_URL}/faction/leaderboard`);
                 const data = await res.json();
@@ -24,8 +25,8 @@ const FactionPage: React.FC = () => {
                 console.error(e);
             }
         };
-        fetchFactions();
-        const interval = setInterval(fetchFactions, 5000);
+        fetchFactionData();
+        const interval = setInterval(fetchFactionData, 5000);
         return () => clearInterval(interval);
     }, []);
 

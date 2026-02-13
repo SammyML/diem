@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './ArenaView.css';
+import { API_BASE_URL } from '../config';
 
 interface Battle {
     battleId: string;
@@ -21,7 +22,7 @@ export const ArenaView: React.FC = () => {
     }, []);
 
     const fetchBattles = async () => {
-        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+        const API_URL = API_BASE_URL;
         try {
             const openRes = await fetch(`${API_URL}/arena/battles/open`);
             const openData = await openRes.json();
@@ -35,9 +36,32 @@ export const ArenaView: React.FC = () => {
         }
     };
 
+    const spawnGladiator = async () => {
+        const API_URL = API_BASE_URL;
+        try {
+            await fetch(`${API_URL}/admin/spawn`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ type: 'arena' })
+            });
+            // Give it a moment to appear
+            setTimeout(fetchBattles, 1000);
+        } catch (error) {
+            console.error('Failed to spawn gladiator:', error);
+        }
+    };
+
     return (
         <div className="arena-view">
             <h2 className="arena-title">PVP ARENA</h2>
+
+            <div className="arena-controls">
+                <button className="spawn-btn" onClick={spawnGladiator}>
+                    + SPAWN GLADIATOR
+                </button>
+            </div>
 
             <div className="arena-section">
                 <h3 className="section-title">OPEN CHALLENGES</h3>

@@ -144,3 +144,34 @@
     text-transform: uppercase;
     letter-spacing: 2px;
 }
+
+.arena-controls {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.spawn-btn {
+    background: linear-gradient(45deg, #ff0055, #ff00aa);
+    border: none;
+    padding: 10px 20px;
+    color: white;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255, 0, 85, 0.5);
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+
+.spawn-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255, 0, 85, 0.8);
+}
+
+.spawn-btn:active {
+    transform: scale(0.95);
+}

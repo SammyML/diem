@@ -9,6 +9,8 @@ import { LivingBackground } from './LivingBackground';
 import { WeatherOverlay } from './WeatherOverlay';
 import './GamingDashboard.css';
 
+import { API_BASE_URL } from '../config';
+
 interface Stats {
     totalAgents: number;
     resourcesGathered: number;
@@ -77,7 +79,7 @@ export const GamingDashboard: React.FC = () => {
     }, [stats]);
 
     const fetchData = async () => {
-        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+        const API_URL = API_BASE_URL;
         try {
             // ... (keep existing fetch calls)
 

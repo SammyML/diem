@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { ethers } from 'ethers';
 import './ArenaPage.css';
+import { API_BASE_URL } from '../config';
 
 // Placeholder - Replace with actual deployed address
 const ARENA_CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
@@ -33,7 +35,7 @@ const ArenaPage: React.FC = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const API = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+            const API = API_BASE_URL;
             try {
                 // Fetch Battles
                 const openRes = await fetch(`${API}/arena/battles/open`);

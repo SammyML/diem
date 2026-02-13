@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import './LeaderboardPage.css';
+import { API_BASE_URL } from '../config';
 
 interface Agent {
     id: string;
@@ -22,7 +23,7 @@ const LeaderboardPage: React.FC = () => {
     useEffect(() => {
         const fetchAgents = async () => {
             try {
-                const API = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+                const API = API_BASE_URL;
                 const res = await fetch(`${API}/world/state`);
                 const data = await res.json();
 

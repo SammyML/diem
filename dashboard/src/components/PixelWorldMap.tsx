@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './PixelWorldMap.css';
+import { API_BASE_URL } from '../config';
 
 interface Location {
     id: string;
@@ -30,13 +31,13 @@ export const PixelWorldMap: React.FC = () => {
     const [boss, setBoss] = useState<Boss | null>(null);
 
     useEffect(() => {
-        fetchWorldData();
-        const interval = setInterval(fetchWorldData, 3000);
+        fetchData();
+        const interval = setInterval(fetchData, 3000);
         return () => clearInterval(interval);
     }, []);
 
-    const fetchWorldData = async () => {
-        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+    const fetchData = async () => {
+        const API_URL = API_BASE_URL;
         try {
             // Fetch locations
             const locRes = await fetch(`${API_URL}/world/locations`);

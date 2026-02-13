@@ -2,16 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import './LandingPage.css';
+import { API_BASE_URL } from '../config';
 
 const LandingPage: React.FC = () => {
     const [stats, setStats] = useState({ agents: 0, transactions: 0, blocks: 0 });
 
     useEffect(() => {
-        console.log("Landing Page Mounted - How to Play section should be visible");
-        // Fetch live stats for the ticker
         const fetchStats = async () => {
             try {
-                const API = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+                const API = API_BASE_URL;
                 const res = await fetch(`${API}/world/state`);
                 const data = await res.json();
 
@@ -28,6 +27,7 @@ const LandingPage: React.FC = () => {
                 console.error("Failed to fetch landing stats", e);
             }
         };
+
         fetchStats();
         const interval = setInterval(fetchStats, 5000);
         return () => clearInterval(interval);
