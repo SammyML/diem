@@ -128,7 +128,7 @@ export class WorldStateManager {
             id: uuidv4(),
             name,
             locationId: 'market_square', // All agents start at market
-            monBalance: initialMon,
+            monBalance: initialMon > 0 ? initialMon : 1000, // Default to 1000 MON for wagering
             inventory: [],
             stats: {
                 miningSkill: 0,

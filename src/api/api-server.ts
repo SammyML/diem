@@ -240,7 +240,7 @@ export class ApiServer {
                     id: agentId,
                     name: agentName,
                     locationId: 'market_square',
-                    monBalance: 0,
+                    monBalance: 1000, // Start with 1000 MON for wagering
                     inventory: [],
                     stats: {
                         miningSkill: 0,
@@ -496,7 +496,23 @@ export class ApiServer {
                 return res.status(400).json({ error: 'Agent ID and wager required' });
             }
 
+            // Verify balance and deduct wager
+            const agent = this.worldState.getAgent(agentId);
+            if (!agent) {
+                return res.status(404).json({ error: 'Agent not found' });
+            }
+
+            if (agent.monBalance < wager) {
+                return res.status(400).json({ error: 'Insufficient funds for wager' });
+            }
+
             const result = pvpArenaManager.createChallenge(agentId, wager);
+
+            if (result.success) {
+                this.tokenLedger.deduct(agentId, wager, `Arena Wager: Challenge Created`);
+                this.worldState.updateMonBalance(agentId, -wager, 'arena_wager');
+            }
+
             res.json(result);
         });
 
@@ -508,7 +524,27 @@ export class ApiServer {
                 return res.status(400).json({ error: 'Battle ID and agent ID required' });
             }
 
+            const battle = pvpArenaManager.getBattle(battleId);
+            if (!battle) {
+                return res.status(404).json({ error: 'Battle not found' });
+            }
+
+            const agent = this.worldState.getAgent(agentId);
+            if (!agent) {
+                return res.status(404).json({ error: 'Agent not found' });
+            }
+
+            if (agent.monBalance < battle.wager) {
+                return res.status(400).json({ error: 'Insufficient funds for wager' });
+            }
+
             const result = pvpArenaManager.acceptChallenge(battleId, agentId);
+
+            if (result.success) {
+                this.tokenLedger.deduct(agentId, battle.wager, `Arena Wager: Challenge Accepted`);
+                this.worldState.updateMonBalance(agentId, -battle.wager, 'arena_wager');
+            }
+
             res.json(result);
         });
 

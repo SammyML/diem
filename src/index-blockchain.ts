@@ -61,7 +61,7 @@ async function main() {
                     worldState.updateAgent(agentId, {
                         id: agentId,
                         name: `Agent-${agentAddress.slice(2, 6)}`,
-                        monBalance: 0, // Will be synced from chain
+                        monBalance: 1000, // Default before sync
                         inventory: [],
                         locationId: 'market_square',
                         lastAction: Date.now(),
