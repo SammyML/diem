@@ -59,6 +59,7 @@ async function main() {
 
             // Check for Open PvP Challenges
             const challenge = openBattles.find((b: any) => b.challenger !== agent.name);
+            const myOpen = openBattles.find((b: any) => b.challenger === agent.name);
 
             if (challenge) {
                 // ACCEPT PVP CHALLENGE
@@ -71,26 +72,23 @@ async function main() {
                 } catch (e: any) {
                     console.error('Accept failed:', e.message);
                 }
+            } else if (!myOpen) {
+                // NO PVP -> CREATE CHALLENGE
+                console.log('Creating PvP Challenge...');
+                await axios.post(`${API_URL}/arena/challenge`, {
+                    agentId: agent.id,
+                    wager: 50
+                });
             } else if (boss && boss.isActive && !boss.isDefeated) {
-                // NO PVP -> FIGHT TITAN
-                console.log(`ATTACKING TITAN! (${boss.currentHealth}/${boss.maxHealth} HP)`);
+                // IDLE (WAITING FOR OPPONENT) -> FIGHT TITAN
+                console.log(`Waiting for opponent... Attacks Titan (${boss.currentHealth}/${boss.maxHealth} HP)`);
                 const attackRes = await axios.post(`${API_URL}/boss/attack`, {
                     agentId: agent.id,
                     damage: Math.floor(Math.random() * 50) + 10 // Random damage
                 });
                 console.log(`  > ${attackRes.data.message}`);
             } else {
-                // NO PVP, NO BOSS -> CREATE CHALLENGE
-                const myOpen = openBattles.find((b: any) => b.challenger === agent.name);
-                if (!myOpen) {
-                    console.log('Creating PvP Challenge...');
-                    await axios.post(`${API_URL}/arena/challenge`, {
-                        agentId: agent.id,
-                        wager: 50
-                    });
-                } else {
-                    console.log('Waiting for opponent...');
-                }
+                console.log('Waiting for opponent...');
             }
 
             // Loop Speed

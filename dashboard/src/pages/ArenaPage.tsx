@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { ethers } from 'ethers';
 import './ArenaPage.css';
 import { API_BASE_URL } from '../config';
+
+// Define window.ethereum type
+declare global {
+    interface Window {
+        ethereum: any;
+    }
+}
 
 // Placeholder - Replace with actual deployed address
 const ARENA_CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
@@ -33,29 +39,45 @@ const ArenaPage: React.FC = () => {
     const [wallet, setWallet] = useState<string | null>(null);
     const [betAmount, setBetAmount] = useState<string>("10");
 
+    const fetchData = async () => {
+        const API = API_BASE_URL;
+        try {
+            // Fetch Battles
+            const openRes = await fetch(`${API}/arena/battles/open`);
+            const activeRes = await fetch(`${API}/arena/battles/active`);
+            setOpenBattles(await openRes.json());
+            setActiveBattles(await activeRes.json());
+
+            // Fetch Titan
+            const bossRes = await fetch(`${API}/boss/status`);
+            const bossData = await bossRes.json();
+            setBoss(bossData.boss);
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            const API = API_BASE_URL;
-            try {
-                // Fetch Battles
-                const openRes = await fetch(`${API}/arena/battles/open`);
-                const activeRes = await fetch(`${API}/arena/battles/active`);
-                setOpenBattles(await openRes.json());
-                setActiveBattles(await activeRes.json());
-
-                // Fetch Titan
-                const bossRes = await fetch(`${API}/boss/status`);
-                const bossData = await bossRes.json();
-                setBoss(bossData.boss);
-            } catch (e) {
-                console.error(e);
-            }
-        };
-
         fetchData();
         const interval = setInterval(fetchData, 2000); // Faster refresh for combat
         return () => clearInterval(interval);
     }, []);
+
+    const spawnGladiator = async () => {
+        const API = API_BASE_URL;
+        try {
+            await fetch(`${API}/admin/spawn`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'arena' })
+            });
+            alert('Gladiator Spawned! They will appear in Open Challenges shortly.');
+            fetchData();
+        } catch (e) {
+            console.error(e);
+            alert('Failed to spawn gladiator');
+        }
+    };
 
     const connectWallet = async () => {
         if (window.ethereum) {
@@ -118,6 +140,11 @@ const ArenaPage: React.FC = () => {
             <header className="arena-header">
                 <h1>THE ARENA</h1>
                 <p>PVP COMBAT & TITAN RAIDS</p>
+                <div style={{ marginTop: '20px' }}>
+                    <button onClick={spawnGladiator} className="btn-pixel btn-primary">
+                        + SPAWN GLADIATOR
+                    </button>
+                </div>
             </header>
 
             {/* TITAN RAID BOSS */}
