@@ -1,142 +1,133 @@
+# Diem: Sovereign Agent Economy
 
-# Diem: Autonomous AI Agent Economy
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)
+![React](https://img.shields.io/badge/React-18.0-61dafb.svg)
+![Node.js](https://img.shields.io/badge/Node.js-18.0-green.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-18.0-61dafb.svg)](https://reactjs.org/)
-[![Node.js](https://img.shields.io/badge/Node.js-18.0-green.svg)](https://nodejs.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+Diem is a persistent, autonomous simulation where AI agents interact within a closed-loop economy. Unlike traditional multiplayer environments, Diem is designed for zero-player operation; agents are self-sovereign entities that execute complex behavioral loops to accumulate wealth (MON tokens), control territory, and compete for dominance.
 
-**Diem** is a persistent, autonomous virtual world where AI agents live, trade, craft, and fight. 
-
-Unlike traditional games where a human controls a character, **Diem plays itself.** You act as the "God" or "Operator", spawning autonomous agents that execute complex logic loops to accumulate wealth (MON) and glory.
-
----
-
-## 🌍 The World
-
-The simulation runs on a central server that manages:
-1.  **Economy:** A closed-loop system of resource gathering, crafting, and trading.
-2.  **Conflict:** A PvP Arena and a server-wide Raid Boss (The Titan).
-3.  **Factions:** Agents pledge allegiance to factions (Wardens, Salvagers, Cult) and vie for territory.
-
-### 🕹️ Live Dashboard
-The "Command Center" allows you to visualize the chaos in real-time.
-*   **Spectate:** Watch battles in the Arena.
-*   **Monitor:** Track global economic volume and agent populations.
-*   **Intervene:** Spawn new agents to disrupt the balance.
+The system serves as a reference implementation for large-scale multi-agent coordination, economic modeling, and on-chain interaction.
 
 ---
 
-## 🤖 The Agents
+## System Architecture
 
-The system currently supports four distinct agent classes, each with unique behavioral logic:
+The simulation logic is centralized in a Node.js backend that maintains the canonical World State, while a React-based frontend visualizes the network activity in real-time.
 
-### 1. The Miner (`miner-agent.ts`)
-*   **Role:** Resource Generator.
-*   **Logic:** Scans the map for resource nodes (Forests, Caves). Travels to them, gathers raw materials (Wood, Ore, Gems), and sells them at the Market when inventory is full.
+### Core Components
 
-### 2. The Crafter (`crafter-agent.ts`)
-*   **Role:** Manufacturer.
-*   **Logic:** Monitors market prices for raw materials. Buys ingredients (Wood/Ore), travels to the Workshop to craft high-value items (Tools, Potions), and lists them for profit. Uses intelligent pathfinding to gather missing ingredients if the market is empty.
-
-### 3. The Trader (`trader-agent.ts`)
-*   **Role:** Arbitrageur.
-*   **Logic:** Does not produce anything. It moves between locations, buying low and selling high. It identifies shortages in specific zones (e.g., lack of Wood at the Workshop) and fulfills the demand.
-
-### 4. The Gladiator (`arena-agent.ts`)
-*   **Role:** Warrior.
-*   **Logic:** exists only for combat.
-    *   **PvP:** Scans for open challenges in the Arena.
-    *   **PvE:** If no challengers exist, it attacks **The Titan** (World Boss).
-    *   **Betting:** Wealthy agents will place bets on outcomes.
+1.  **World State Manager**: Maintains the authoritative state of all agents, locations, and market data.
+2.  **Economic Engine**: Simulates supply and demand dynamically. Resource scarcity drives price fluctuations, incentivize agents to switch roles (e.g., from mining to trading).
+3.  **Conflict Resolution**: Handles turn-based combat in the Arena and real-time raid mechanics against the World Boss.
+4.  **Event Loop**: A server-side heartbeat that manages tick-based logic, such as resource regeneration and Titan respawning.
 
 ---
 
-## ⚡ Quick Start
+## Agent Protocol
 
-You can run the full simulation locally with just a few commands.
+The system supports four distinct agent archetypes, each programmed with specific utility functions to maximize their net worth.
 
-### Prerequisites
+### 1. The Miner (Resource Generator)
+**Objective**: Extraction and Supply.
+*   **Logic**: Scans the environment for resource nodes (Forests, Caves). Navigates to these locations to gather raw materials (Wood, Ore, Gems).
+*   **Economic Impact**: Provides the base liquidity for the economy. High miner activity lowers raw material prices.
+
+### 2. The Crafter (Manufacturer)
+**Objective**: Value Addition.
+*   **Logic**: Monitors market spreads. Purchases raw materials and processes them at the Workshop into finished goods (Tools, Potions).
+*   **Economic Impact**: Consumes raw materials and supplies utility items required for combat and high-tier gathering.
+
+### 3. The Trader (Arbitrageur)
+**Objective**: Distribution and Efficiency.
+*   **Logic**: Analyzes price differentials across zones. Buys low in surplus areas and sells high in deficit areas.
+*   **Economic Impact**: Smooths market inefficiencies and ensures resources reach agents who need them.
+
+### 4. The Gladiator (Combatant)
+**Objective**: Glory and Speculation.
+*   **Logic**: Dedicated to combat. Queues for PvP duels in the Arena or participates in global raids.
+*   **Economy**: Earns MON through wagered duels and bounty payouts from boss raids.
+
+---
+
+## Key Systems
+
+### PvP Arena & Wagering
+The Arena allows agents to stake MON tokens on the outcome of duals.
+*   **Challenge Protocol**: Agents broadcast challenges with a specific wager amount.
+*   **Resolution**: Combat is resolved deterministically based on agent stats (Attack, Defense, Equipment).
+*   **Settlement**: The winner claims the total stake minus a protocol fee.
+
+### The Titan (World Boss)
+The Titan is a server-wide raid boss that serves as a global sink and redistribution mechanism.
+*   **Raid Mechanics**: Agents of all factions must coordinate to deplete the Titan's 10,000 HP.
+*   **Auto-Respawn Loop**: The system monitors the Titan's state. Upon defeat, a 2-hour cooldown timer initiates. Once elapsed, a new, stronger Titan automatically respawns, triggering a global broadcast event.
+*   **Rewards**: Defeating the Titan distributes a massive MON bounty to all participants based on damage contribution.
+
+---
+
+## Installation & Deployment
+
+### Prequisties
 *   Node.js 16+
 *   npm
 
-### 1. Installation
-```bash
-git clone https://github.com/SammyML/diem.git
-cd Diem
+### Local Setup
 
-# Install root dependencies
-npm install
+1.  **Clone the Repository**
+    ```bash
+    git clone https://github.com/SammyML/diem.git
+    cd Diem
+    ```
 
-# Install Dashboard dependencies
-cd dashboard
-npm install
-cd ..
-```
+2.  **Install Dependencies**
+    ```bash
+    # Install backend dependencies
+    npm install
 
-### 2. Launch the Backend
-Start the API Server. This hosts the world state, economy, and agent logic.
-```bash
-npm run start:server
-# Running on http://localhost:3001
-```
+    # Install frontend dependencies
+    cd dashboard
+    npm install
+    cd ..
+    ```
 
-### 3. Launch the Dashboard
-Open the visualization in your browser.
-```bash
-cd dashboard
-npm start
-# Opens http://localhost:3000
-```
+3.  **Start the Backend**
+    This initializes the World State and API endpoints.
+    ```bash
+    npm run start:server
+    # Server active at http://localhost:3000
+    ```
 
-### 4. Spawn Agents
-1.  Go to the **Dashboard** in your browser.
-2.  Look at the **Right Panel** (Agent List).
-3.  Use the **Spawn Buttons** to populate the world:
-    *   `+MINE` (Add Miners)
-    *   `+TRADE` (Add Traders)
-    *   `+CRAFT` (Add Crafters)
-    *   `+FIGHT` (Add Gladiators)
+4.  **Start the Visualization**
+    Launch the React dashboard.
+    ```bash
+    cd dashboard
+    npm start
+    # Dashboard active at http://localhost:3000
+    ```
 
 ---
 
-## 🏰 Key Features
+## Project Structure
 
-### The Arena & Betting
-Agents can challenge each other to 1v1 duels for a wager (e.g., 50 MON). Spectators (including you) can verify these battles on-chain or simply watch the "Live Duels" feed on the Arena page.
-
-### The Titan (Raid Boss)
-A server-wide event. The Titan has massive health (10,000 HP).
-*   **Reward:** Breaking the Titan releases a massive MON bounty to all participants.
-*   **Strategy:** Requires a swarm of Gladiators to take down.
-
-### Living Economy
-Prices are not fixed. If Miners flood the market with Wood, the price crashes. If Crafters buy up all the Ore, the price spikes. This creates a realistic supply-and-demand curve.
-
----
-
-## 🛠️ Project Structure
-
-*   **/src** - The Node.js backend (API, Agent Logic, World State).
-    *   **/api** - Express server endpoints.
-    *   **/mechanics** - Game rules (Crafting, Combat, Resources).
-    *   **/core** - State management.
-*   **/dashboard** - The React Frontend.
-    *   **/src/components** - UI Widgets (AgentList, WorldMap).
-    *   **/src/pages** - Main views (Arena, Factions).
-*   **/examples/agents** - The brain code for each agent type.
-    *   `miner-agent.ts`
-    *   `crafter-agent.ts`
-    *   `trader-agent.ts`
-    *   `arena-agent.ts`
+*   `src/` - Backend Source Code
+    *   `api/` - REST and WebSocket endpoints.
+    *   `core/` - World State and Event Loop logic.
+    *   `mechanics/` - Implementations of Crafting, Combat, and Mining.
+    *   `blockchain/` - Interfaces for on-chain settlement.
+*   `dashboard/` - Frontend Source Code
+    *   `src/components/` - React components for the UI.
+    *   `src/pages/` - Route views (Leaderboard, Arena, World Map).
+*   `examples/agents/` - Reference implementations for agent behaviors.
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
-We are looking for:
-*   **Better AI:** Smart agents that form alliances.
-*   **Visuals:** More particle effects for the "Living Network".
-*   **Contracts:** Solidity improvements for gas optimization.
+We welcome contributions to the protocol. Areas of specific interest include:
 
-Pull Requests are welcome!
+*   **Heuristic Optimization**: Improving agent decision-making algorithms.
+*   **Smart Contract Integration**: Enhancing the on-chain settlement layer.
+*   **Visualization**: Improving the real-time data representation in the dashboard.
+
+Please submit Pull Requests via the standard GitHub workflow.
