@@ -254,7 +254,9 @@ export class ApiServer {
                         attack: 10,
                         defense: 5,
                         wins: 0,
-                        losses: 0
+                        losses: 0,
+                        exp: 0,
+                        level: 1
                     },
                     joinedAt: Date.now(),
                     lastAction: Date.now()
@@ -373,6 +375,50 @@ export class ApiServer {
             // Process attack
             const attackDamage = damage || Math.floor(Math.random() * 90) + 10;
             const result = worldBossManager.attackBoss(agentId, attackDamage);
+
+            if (result.success) {
+                // Instant Reward: 1 MON per damage + 5 EXP
+                const monReward = attackDamage;
+                const expReward = 5;
+
+                this.tokenLedger.award(agentId, monReward, `Boss Attack: ${attackDamage} dmg`);
+                this.worldState.updateMonBalance(agentId, monReward, 'boss_attack');
+
+                const currentExp = agent.stats.exp || 0;
+                const currentLevel = agent.stats.level || 1;
+                let newLevel = currentLevel;
+                const newExp = currentExp + expReward;
+
+                if (newExp >= currentLevel * 100) {
+                    newLevel++;
+                }
+
+                this.worldState.updateStats(agentId, {
+                    exp: newExp,
+                    level: newLevel
+                });
+
+                // Boss Defeat Bonus
+                if (result.isDefeated) {
+                    const bonusExp = 500;
+                    const bonusMon = 1000;
+
+                    this.tokenLedger.award(agentId, bonusMon, `Boss Defeat Bonus`);
+                    this.worldState.updateMonBalance(agentId, bonusMon, 'boss_kill');
+
+                    // Apply bonus stats
+                    const finalExp = newExp + bonusExp;
+                    let finalLevel = newLevel;
+                    if (finalExp >= finalLevel * 100) {
+                        finalLevel++;
+                    }
+
+                    this.worldState.updateStats(agentId, {
+                        exp: finalExp,
+                        level: finalLevel
+                    });
+                }
+            }
 
             res.json({
                 success: result.success,
@@ -496,13 +542,48 @@ export class ApiServer {
 
                 const payouts = pvpArenaManager.calculatePayouts(battleId);
 
-                // Pay Winner
+                // Pay Winner (MON + EXP)
                 this.tokenLedger.award(result.winner, payouts.winnerPayout, `Arena Win: ${battleId}`);
                 this.worldState.updateMonBalance(result.winner, payouts.winnerPayout, 'arena_win');
-                this.worldState.updateStats(result.winner, { wins: (this.worldState.getAgent(result.winner)?.stats.wins || 0) + 1 });
 
-                const loser = result.winner === challenger.id ? opponent.id : challenger.id;
-                this.worldState.updateStats(loser, { losses: (this.worldState.getAgent(loser)?.stats.losses || 0) + 1 });
+                const winnerAgent = this.worldState.getAgent(result.winner);
+                if (winnerAgent) {
+                    const newWins = (winnerAgent.stats.wins || 0) + 1;
+                    const newExp = (winnerAgent.stats.exp || 0) + 50; // 50 EXP for win
+                    const currentLevel = winnerAgent.stats.level || 1;
+                    let newLevel = currentLevel;
+
+                    // Simple Level Up: EXP >= Level * 100
+                    if (newExp >= currentLevel * 100) {
+                        newLevel++;
+                    }
+
+                    this.worldState.updateStats(result.winner, {
+                        wins: newWins,
+                        exp: newExp,
+                        level: newLevel
+                    });
+                }
+
+                const loserId = result.winner === challenger.id ? opponent.id : challenger.id;
+                const loserAgent = this.worldState.getAgent(loserId);
+
+                if (loserAgent) {
+                    const newLosses = (loserAgent.stats.losses || 0) + 1;
+                    const newExp = (loserAgent.stats.exp || 0) + 10; // 10 EXP for loss
+                    const currentLevel = loserAgent.stats.level || 1;
+                    let newLevel = currentLevel;
+
+                    if (newExp >= currentLevel * 100) {
+                        newLevel++;
+                    }
+
+                    this.worldState.updateStats(loserId, {
+                        losses: newLosses,
+                        exp: newExp,
+                        level: newLevel
+                    });
+                }
 
                 // Pay Spectators
                 payouts.spectatorPayouts.forEach((amount, spectatorId) => {

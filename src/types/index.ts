@@ -66,6 +66,9 @@ export interface AgentStats {
     wins: number;
     losses: number;
     totalActions: number;
+    // Leveling
+    exp: number;
+    level: number;
 }
 
 export interface WorldState {
