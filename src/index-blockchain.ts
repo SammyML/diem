@@ -76,7 +76,9 @@ async function main() {
                             attack: 10,
                             defense: 5,
                             wins: 0,
-                            losses: 0
+                            losses: 0,
+                            exp: 0,
+                            level: 1
                         },
                         joinedAt: Date.now()
                     });
