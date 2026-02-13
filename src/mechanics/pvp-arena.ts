@@ -42,6 +42,19 @@ export class PvPArenaManager {
             };
         }
 
+        // Check if challenger is already in a battle
+        const isBusy = Array.from(this.battles.values()).some(b =>
+            (b.challenger === challenger || b.opponent === challenger) &&
+            (b.status === 'open' || b.status === 'active')
+        );
+
+        if (isBusy) {
+            return {
+                success: false,
+                message: 'You are already in a battle or have an open challenge'
+            };
+        }
+
         const battleId = `battle_${++this.battleCounter}`;
         const battle: ArenaBattle = {
             battleId,
@@ -83,6 +96,19 @@ export class PvPArenaManager {
 
         if (battle.challenger === opponent) {
             return { success: false, message: 'Cannot challenge yourself' };
+        }
+
+        // Check if opponent is already in a battle
+        const isBusy = Array.from(this.battles.values()).some(b =>
+            (b.challenger === opponent || b.opponent === opponent) &&
+            (b.status === 'open' || b.status === 'active')
+        );
+
+        if (isBusy) {
+            return {
+                success: false,
+                message: 'You are already in a battle'
+            };
         }
 
         battle.opponent = opponent;

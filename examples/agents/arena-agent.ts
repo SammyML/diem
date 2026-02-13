@@ -75,10 +75,14 @@ async function main() {
             } else if (!myOpen) {
                 // NO PVP -> CREATE CHALLENGE
                 console.log('Creating PvP Challenge...');
-                await axios.post(`${API_URL}/arena/challenge`, {
-                    agentId: agent.id,
-                    wager: 50
-                });
+                try {
+                    await axios.post(`${API_URL}/arena/challenge`, {
+                        agentId: agent.id,
+                        wager: 50
+                    });
+                } catch (e: any) {
+                    console.error('Create challenge failed:', e.message);
+                }
             } else if (boss && boss.isActive && !boss.isDefeated) {
                 // IDLE (WAITING FOR OPPONENT) -> FIGHT TITAN
                 console.log(`Waiting for opponent... Attacks Titan (${boss.currentHealth}/${boss.maxHealth} HP)`);
